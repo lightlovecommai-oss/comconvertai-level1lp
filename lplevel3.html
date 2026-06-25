@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="page-title"></title>
+<meta name="description" id="page-desc">
+<meta property="og:title" id="og-title">
+<meta property="og:description" id="og-desc">
+<meta property="og:image" id="og-image">
+<meta property="og:type" content="website">
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg-dark:       #1a0f14;
+    --bg-dark-mid:   #160c10;
+    --bg-dark-light: #2a1020;
+    --bg-light:      #eef0ea;
+    --bg-light-dark: #e3e7dc;
+    --white:         #ffffff;
+    --accent:        #b89060;
+    --accent-light:  #d4b080;
+    --gold:          #cdab7e;
+    --text-muted:    #6e7263;
+    --font-serif:    'Noto Serif TC', serif;
+    --font-sans:     'Noto Sans TC', sans-serif;
+    --font-latin:    'Inter', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--font-sans); background: var(--bg-light); color: var(--bg-dark); overflow-x: hidden; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 28px;
+    background: rgba(18,10,15,0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid #333;
+  }
+  .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .nav-logo-mark {
+    width: 36px; height: 36px; background: var(--accent); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-serif); font-weight: 900; font-size: 16px; color: white; flex-shrink: 0;
+  }
+  .nav-logo-text {
+    font-family: var(--font-latin); font-size: 13px; letter-spacing: 0.18em;
+    color: var(--bg-light); font-weight: 400; text-transform: uppercase;
+  }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-cta {
+    background: var(--accent); color: white; border: none;
+    padding: 10px 22px; font-family: var(--font-sans); font-size: 13px;
+    letter-spacing: 0.08em; cursor: pointer; text-decoration: none;
+    transition: background 0.2s; white-space: nowrap;
+  }
+  .nav-cta:hover { background: var(--accent-light); }
+
+  /* ── HAMBURGER ── */
+  .hamburger {
+    display: none; flex-direction: column; gap: 5px;
+    cursor: pointer; padding: 4px; background: none; border: none;
+  }
+  .hamburger span {
+    display: block; width: 22px; height: 2px;
+    background: var(--bg-light); border-radius: 2px;
+    transition: all 0.25s ease;
+  }
+  .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* ── MOBILE MENU ── */
+  .mobile-menu {
+    display: none; position: fixed; top: 73px; left: 0; right: 0; z-index: 99;
+    background: rgba(18,10,15,0.98); backdrop-filter: blur(8px);
+    border-bottom: 1px solid #333;
+    flex-direction: column;
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.35s ease;
+  }
+  .mobile-menu.open { max-height: 400px; }
+  .mobile-menu a {
+    display: block; padding: 16px 28px;
+    font-size: 15px; color: var(--bg-light); text-decoration: none;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    letter-spacing: 0.05em;
+    transition: background 0.15s;
+  }
+  .mobile-menu a:hover { background: rgba(255,255,255,0.06); }
+  .mobile-menu .menu-cta {
+    margin: 16px 28px 20px;
+    display: block; text-align: center;
+    background: var(--accent); color: white; text-decoration: none;
+    padding: 14px; font-size: 14px; letter-spacing: 0.08em;
+  }
+
+  @media (max-width: 600px) {
+    .nav-cta { display: none; }
+    .hamburger { display: flex; }
+    .mobile-menu { display: flex; }
+    .nav-logo-text { font-size: 11px; letter-spacing: 0.12em; }
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh; background: var(--bg-dark);
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: flex-start;
+    padding: 120px 28px 80px; position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; top: -100px; right: -100px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(205,171,126,0.10) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    font-family: var(--font-latin); font-size: 11px; letter-spacing: 0.3em;
+    color: var(--accent); text-transform: uppercase; margin-bottom: 28px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .hero-eyebrow::before { content: ''; width: 32px; height: 1px; background: var(--accent); }
+  .hero-title {
+    font-family: var(--font-serif); font-size: clamp(48px, 12vw, 88px);
+    font-weight: 900; color: var(--white); line-height: 1.05;
+    margin-bottom: 24px; letter-spacing: -0.02em;
+  }
+  .hero-title em { font-style: normal; color: var(--gold); }
+  .hero-sub {
+    font-size: 15px; color: #aaa; line-height: 1.8;
+    max-width: 340px; margin-bottom: 48px; font-weight: 300; letter-spacing: 0.04em;
+  }
+  .hero-quote { border-left: 3px solid var(--accent); padding-left: 20px; margin-bottom: 48px; max-width: 340px; }
+  .hero-quote p { font-family: var(--font-serif); font-size: 15px; color: #ccc; line-height: 1.8; font-style: italic; }
+  .hero-cta {
+    display: inline-flex; align-items: center; gap: 12px;
+    background: var(--accent); color: white; text-decoration: none;
+    padding: 18px 36px; font-size: 15px; letter-spacing: 0.08em;
+    font-family: var(--font-sans); transition: all 0.2s;
+  }
+  .hero-cta:hover { background: var(--accent-light); gap: 18px; }
+  .hero-cta-arrow { font-size: 18px; transition: transform 0.2s; }
+  .hero-cta:hover .hero-cta-arrow { transform: translateX(4px); }
+  .hero-stats {
+    display: flex; gap: 40px; margin-top: 64px;
+    padding-top: 40px; border-top: 1px solid #333; width: 100%;
+  }
+  .hero-stat-num { font-family: var(--font-serif); font-size: 28px; font-weight: 900; color: var(--gold); line-height: 1; margin-bottom: 4px; }
+  .hero-stat-label { font-size: 11px; color: #666; letter-spacing: 0.1em; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .hero-eyebrow { animation: fadeUp 0.7s ease 0.10s both; }
+  .hero-title   { animation: fadeUp 0.7s ease 0.20s both; }
+  .hero-sub     { animation: fadeUp 0.7s ease 0.35s both; }
+  .hero-quote   { animation: fadeUp 0.7s ease 0.45s both; }
+  .hero-cta     { animation: fadeUp 0.7s ease 0.55s both; }
+  .hero-stats   { animation: fadeUp 0.7s ease 0.65s both; }
+
+  /* ── SECTION BASE ── */
+  .section { padding: 80px 28px; }
+  .section-dark { background: var(--bg-dark); color: var(--white); }
+  .section-label {
+    display: flex; align-items: center; gap: 10px;
+    font-family: var(--font-latin); font-size: 11px; letter-spacing: 0.25em;
+    color: var(--text-muted); text-transform: uppercase; margin-bottom: 20px;
+  }
+  .section-dark .section-label { color: #555; }
+  .section-title { font-family: var(--font-serif); font-size: clamp(28px, 8vw, 44px); font-weight: 900; line-height: 1.2; margin-bottom: 24px; }
+  .section-body { font-size: 14px; line-height: 1.9; color: #555; max-width: 480px; }
+  .section-dark .section-body { color: #999; }
+
+  /* ── PHILOSOPHY ── */
+  .philosophy-statement {
+    font-family: var(--font-serif); font-size: clamp(22px, 6vw, 32px);
+    font-weight: 700; line-height: 1.5; color: var(--bg-dark);
+    margin-bottom: 32px; border-left: 4px solid var(--accent); padding-left: 24px;
+  }
+  .philosophy-body { font-size: 15px; line-height: 2; color: #555; margin-bottom: 20px; }
+  .highlight-box { background: var(--bg-dark); padding: 24px; margin-top: 32px; }
+  .highlight-box p { font-family: var(--font-serif); font-size: 16px; color: var(--gold); line-height: 1.7; font-weight: 700; }
+
+  /* ── STORY ── */
+  .story-image-frame {
+    width: 100%; min-height: 420px; background: var(--bg-dark);
+    position: relative; overflow: hidden; display: flex; align-items: flex-end;
+  }
+  .story-photo {
+    position: absolute; bottom: 0; right: 0; height: 110%; width: auto;
+    object-fit: contain; object-position: bottom right;
+    filter: drop-shadow(0 0 40px rgba(205,171,126,0.15));
+  }
+  .story-image-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 60%); }
+  .story-image-label { position: relative; z-index: 2; padding: 24px; }
+  .story-image-label .tag { font-family: var(--font-latin); font-size: 10px; letter-spacing: 0.2em; color: var(--gold); text-transform: uppercase; margin-bottom: 6px; }
+  .story-image-label .name { font-family: var(--font-serif); font-size: 20px; font-weight: 700; color: white; }
+  .story-image-label .sub { font-size: 11px; color: #888; letter-spacing: 0.1em; margin-top: 4px; }
+
+  .timeline-item { padding: 28px 0; border-bottom: 1px solid #eee; display: grid; grid-template-columns: 80px 1fr; gap: 20px; align-items: start; }
+  .timeline-tag { font-family: var(--font-latin); font-size: 10px; letter-spacing: 0.15em; color: var(--gold); text-transform: uppercase; padding-top: 3px; font-weight: 600; }
+  .timeline-content h4 { font-family: var(--font-serif); font-size: 18px; font-weight: 700; margin-bottom: 8px; color: var(--bg-dark); }
+  .timeline-content p { font-size: 13px; line-height: 1.8; color: #666; }
+
+  .credential-box { margin-top: 32px; padding: 24px; background: var(--white); border-left: 3px solid var(--gold); }
+  .credential-group-title { font-family: var(--font-latin); font-size: 10px; letter-spacing: 0.15em; color: var(--gold); text-transform: uppercase; margin-bottom: 10px; }
+  .credential-item { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--bg-dark); line-height: 1.6; margin-bottom: 8px; }
+  .credential-item::before { content: '✓'; color: var(--gold); flex-shrink: 0; font-weight: 700; }
+  .credential-group + .credential-group { margin-top: 16px; }
+  .credential-stats { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
+  .credential-stat { flex: 1; min-width: 90px; background: var(--bg-dark); padding: 16px 12px; text-align: center; }
+  .credential-stat-num { font-family: var(--font-serif); font-size: 20px; font-weight: 900; color: var(--gold); margin-bottom: 4px; }
+  .credential-stat-label { font-size: 11px; color: #999; letter-spacing: 0.05em; }
+
+  /* ── CURRICULUM ── */
+  .curriculum-intro { font-size: 14px; color: #999; margin-bottom: 36px; line-height: 1.7; }
+  .stage-card { background: var(--bg-dark-mid); margin-bottom: 3px; overflow: hidden; position: relative; }
+  .stage-card-inner { padding: 32px 28px; position: relative; z-index: 1; }
+  .stage-num { font-family: var(--font-latin); font-size: 48px; font-weight: 300; color: rgba(255,255,255,0.06); position: absolute; top: 16px; right: 24px; line-height: 1; pointer-events: none; user-select: none; }
+  .stage-tag { font-family: var(--font-latin); font-size: 10px; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; margin-bottom: 10px; }
+  .stage-name { font-family: var(--font-serif); font-size: 22px; font-weight: 900; color: white; margin-bottom: 8px; line-height: 1.3; }
+  .stage-desc { font-size: 13px; color: #999; line-height: 1.7; }
+  .stage-keyword-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  .stage-keyword { border: 1px solid #444; padding: 5px 12px; font-size: 11px; color: #888; letter-spacing: 0.05em; }
+  .week-list { margin-top: 16px; padding-top: 12px; border-top: 1px solid #333; }
+  .week-item { display: flex; align-items: baseline; gap: 10px; font-size: 12px; color: #aaa; line-height: 1.7; padding: 4px 0; }
+  .week-item .week-num { font-family: var(--font-latin); font-size: 11px; color: var(--gold); flex-shrink: 0; letter-spacing: 0.05em; }
+
+  /* ── COMPARE ── */
+  .compare-table { margin-top: 28px; width: 100%; border-collapse: collapse; font-size: 12px; }
+  .compare-table th, .compare-table td { border: 1px solid var(--bg-light-dark); padding: 14px 8px; text-align: center; line-height: 1.6; }
+  .compare-table th { font-family: var(--font-serif); font-size: 13px; font-weight: 700; background: var(--bg-light-dark); color: var(--bg-dark); }
+  .compare-table td:first-child, .compare-table th:first-child { text-align: left; font-weight: 700; color: var(--text-muted); width: 30%; }
+  .compare-table .compare-highlight { background: var(--bg-dark); color: var(--white); font-weight: 700; }
+  .compare-table th.compare-highlight { color: var(--gold); }
+
+  /* ── TARGET ── */
+  .target-card { background: var(--white); padding: 24px; margin-bottom: 12px; border-left: 3px solid transparent; transition: border-color 0.2s; }
+  .target-card:hover { border-color: var(--accent); }
+  .target-header { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
+  .target-icon { width: 40px; height: 40px; background: #e8f0f8; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .target-role { font-family: var(--font-serif); font-size: 16px; font-weight: 700; color: var(--bg-dark); }
+  .target-pain { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.6; }
+  .target-divider { border: none; border-top: 1px solid #eee; margin: 12px 0; }
+  .target-result-label { font-family: var(--font-latin); font-size: 10px; letter-spacing: 0.15em; color: var(--accent); text-transform: uppercase; margin-bottom: 10px; }
+  .target-result-item { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; font-size: 13px; color: var(--bg-dark); line-height: 1.5; }
+  .target-result-item::before { content: '→'; color: var(--accent); flex-shrink: 0; margin-top: 1px; }
+
+  /* ── TESTIMONIALS ── */
+  .testimonial-card { background: var(--bg-dark-mid); padding: 28px 24px; margin-bottom: 12px; position: relative; }
+  .testimonial-quote-mark { font-family: var(--font-serif); font-size: 64px; color: var(--gold); opacity: 0.2; position: absolute; top: 10px; left: 20px; line-height: 1; pointer-events: none; }
+  .testimonial-result { font-family: var(--font-serif); font-size: 20px; font-weight: 900; color: var(--gold); margin-bottom: 12px; padding-top: 8px; position: relative; z-index: 1; }
+  .testimonial-text { font-size: 13px; color: #aaa; line-height: 1.8; margin-bottom: 20px; position: relative; z-index: 1; }
+  .testimonial-person { display: flex; align-items: center; gap: 12px; position: relative; z-index: 1; }
+  .testimonial-avatar { width: 36px; height: 36px; border-radius: 50%; background: #444; display: flex; align-items: center; justify-content: center; font-family: var(--font-serif); font-size: 14px; font-weight: 700; color: white; flex-shrink: 0; }
+  .testimonial-name { font-size: 14px; font-weight: 500; color: white; }
+  .testimonial-meta { font-size: 11px; color: #666; letter-spacing: 0.05em; }
+
+  /* ── FAQ ── */
+  .faq-item { border-bottom: 1px solid #e0dbd4; overflow: hidden; }
+  .faq-q { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; cursor: pointer; gap: 16px; }
+  .faq-num { font-family: var(--font-latin); font-size: 11px; color: var(--text-muted); letter-spacing: 0.1em; flex-shrink: 0; width: 32px; }
+  .faq-question { font-size: 14px; font-weight: 500; color: var(--bg-dark); flex: 1; line-height: 1.5; }
+  .faq-toggle { font-size: 18px; color: var(--accent); flex-shrink: 0; transition: transform 0.25s; font-weight: 300; line-height: 1; }
+  .faq-item.open .faq-toggle { transform: rotate(45deg); }
+  .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; padding-left: 32px; }
+  .faq-item.open .faq-a { max-height: 200px; }
+  .faq-answer { font-size: 13px; line-height: 1.9; color: #777; padding-bottom: 20px; }
+
+  /* ── CTA ── */
+  .cta-section { background: var(--bg-dark); padding: 80px 28px; text-align: center; }
+  .cta-label { font-family: var(--font-latin); font-size: 11px; letter-spacing: 0.3em; color: var(--accent); text-transform: uppercase; margin-bottom: 24px; }
+  .cta-title { font-family: var(--font-serif); font-size: clamp(26px, 7vw, 40px); font-weight: 900; color: white; line-height: 1.3; margin-bottom: 16px; }
+  .cta-sub { font-size: 14px; color: #777; line-height: 1.8; margin-bottom: 40px; max-width: 320px; margin-left: auto; margin-right: auto; }
+  .cta-btn { display: inline-flex; align-items: center; gap: 12px; background: var(--accent); color: white; text-decoration: none; padding: 20px 40px; font-size: 15px; letter-spacing: 0.08em; font-family: var(--font-sans); transition: all 0.2s; margin-bottom: 20px; }
+  .cta-btn:hover { background: var(--accent-light); gap: 18px; }
+  .cta-note { font-size: 11px; color: #555; letter-spacing: 0.1em; }
+
+  /* ── GUARANTEE ── */
+  .guarantee-box { margin-top: 32px; padding: 28px 24px; background: var(--bg-dark-light); text-align: center; border: 1px solid var(--gold); }
+  .guarantee-badge { display: inline-block; font-family: var(--font-latin); font-size: 11px; letter-spacing: 0.2em; color: var(--gold); text-transform: uppercase; border: 1px solid var(--gold); border-radius: 999px; padding: 6px 18px; margin-bottom: 16px; }
+  .guarantee-title { font-family: var(--font-serif); font-size: 22px; font-weight: 900; color: var(--white); margin-bottom: 12px; }
+  .guarantee-body { font-size: 13px; color: #999; line-height: 1.8; max-width: 480px; margin: 0 auto; }
+
+  /* ── STICKY BAR ── */
+  .sticky-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(26,26,26,0.97); border-top: 1px solid #333; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 99; backdrop-filter: blur(8px); }
+  .sticky-bar-text { font-size: 12px; color: #888; line-height: 1.4; }
+  .sticky-bar-text strong { color: white; font-size: 13px; display: block; }
+  .sticky-bar-btn { background: var(--accent); color: white; text-decoration: none; padding: 12px 24px; font-size: 13px; letter-spacing: 0.06em; white-space: nowrap; transition: background 0.2s; flex-shrink: 0; }
+  .sticky-bar-btn:hover { background: var(--accent-light); }
+
+  /* ── FOOTER ── */
+  footer { background: #120a0f; padding: 40px 28px 120px; text-align: center; }
+  .footer-logo { font-family: var(--font-serif); font-size: 18px; font-weight: 900; color: white; margin-bottom: 8px; }
+  .footer-sub { font-size: 11px; color: var(--gold); letter-spacing: 0.1em; margin-bottom: 24px; }
+  .footer-note { font-size: 11px; color: #cbb8a8; line-height: 1.7; }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+  LP CONFIG — 每個 LP 只需要修改這裡，HTML 結構不用動
+============================================================ -->
+<script>
+const LP = {
+  // ── META ──────────────────────────────────────────────────
+  meta: {
+    title:       "站上台，卻讓觀眾低頭滑手機？｜溝通變現塾",
+    description: "1vN 公眾演說成交率提升 20%，讓觀眾聽完主動找上你，而不是你去追。",
+    ogImage:     "photographic.PNG",
+  },
+
+  // ── NAV ───────────────────────────────────────────────────
+  nav: {
+    brand:   "溝通變現塾",
+    logoChar:"光",
+    ctaText: "預約免費諮詢 →",
+    ctaUrl:  "https://calendly.com/lightlovecomm/60min",
+  },
+
+  // ── HERO ──────────────────────────────────────────────────
+  hero: {
+    eyebrow:   "光頭老師 · 吸引式 1vN 公眾演說",
+    titleHtml: "站上台，<br>卻讓觀眾<em>低頭滑手機</em>？",
+    sub:       "不是你的內容不好，是還沒找到讓整場觀眾跟著你走的演說結構",
+    quote:     "最好的演說，不是你說得多精彩，是觀眾聽完主動找上你",
+    ctaText:   "預約免費諮詢",
+    stats: [
+      { num: "20%",    label: "公眾演說現場成交率目標" },
+      { num: "12週",   label: "完整建立演說變現系統" },
+      { num: "1場",    label: "學員新品發表 3 小時 1,000 萬" },
+    ],
+  },
+
+  // ── PHILOSOPHY ────────────────────────────────────────────
+  philosophy: {
+    statement:    "觀眾不是不想聽，<br>是你還沒讓他們覺得「這就是在說我」。",
+    paragraphs: [
+      "你有沒有這種感覺：準備了很久，站上台說了很多，但台下的人眼神飄走、低頭滑手機，說完之後沒有人主動來找你。不是內容不好，是演說少了讓人「被打中」的結構。",
+      "公眾演說的成交不靠激情，也不靠催眠。是讓觀眾在你說話的過程中，自己走過「被吸引→被理解→覺得你能幫我→我現在就要」這四個階段。",
+      "吸引式 1vN 公眾演說課只做一件事：把你的演說，從「說完大家鼓掌離開」變成「說完觀眾主動問你怎麼合作」。",
+    ],
+    highlight: "一場演說，<br>是你同時跟一百個人做一對一成交的機會。",
+  },
+
+  // ── STORY ─────────────────────────────────────────────────
+  story: {
+    photo:    "photographic.PNG",
+    photoAlt: "光頭老師",
+    tag:      "光頭老師 · IVOR",
+    name:     "平凡人光頭",
+    title:    "銷售溝通教練 · 溝通變現塾創辦人",
+    timeline: [
+      { tag: "低谷", heading: "說完台下一片掌聲，然後沒有然後", body: "早期我演講說得很賣力，觀眾也喜歡，但走下台沒有一個人來問我。我以為是內容問題，其實是演說少了讓人「現在就想行動」的結構。" },
+      { tag: "發現", heading: "演說成交是有公式的",              body: "後來我拆解了幾十場高成交演說，發現一個規律：不是說得好就能成交，是要讓觀眾在你說話的過程中，自己走過完整的心理歷程。" },
+      { tag: "突破", heading: "3 小時新品發表，成交 1,000 萬",   body: "用完整的演說成交結構操盤一場新品發表會，3 小時現場成交 1,000 萬。那一刻我確定：演說是最高效的成交工具。" },
+      { tag: "現在", heading: "把這套演說系統交給你",             body: "「每一場演說，都是你最大規模的成交機會。」我把這套讓觀眾主動找上你的完整 12 週系統，整理成你能複製的方法論。" },
+    ],
+    credentials: [
+      {
+        groupTitle: "實戰背景",
+        items: [
+          "7 年廣告實戰經驗",
+          "曾任職 4A 廣告代理商（維骨力、BenQ、LG、白蘭氏……）",
+          "數位廣告顧問，操盤超過 2,000 萬廣告預算",
+        ],
+      },
+      {
+        groupTitle: "教學成果",
+        items: [
+          "5 年內完成超過 200 場實戰演講",
+          "操盤新品發表會，3 小時創造 1,000 萬營業額",
+          "輔導講師學員首場演說即現場收單",
+          "企業培訓客戶年營業額成長 3–5 倍",
+        ],
+      },
+    ],
+    credentialStats: [
+      { num: "200+",    label: "實戰演講場次" },
+      { num: "1,000萬", label: "單場發表會成交額" },
+      { num: "3–5倍",   label: "企業營收成長" },
+    ],
+  },
+
+  // ── CURRICULUM ────────────────────────────────────────────
+  curriculum: {
+    sectionTitle: "12 週，<br>把演說變成<br>你最強的成交工具",
+    intro:        "不是練口才、不是背稿子。是讓你每次站上台，觀眾都覺得「這個人在說我的事」。",
+    stages: [
+      {
+        tag:      "Week 1–4 · 吸引力核心",
+        name:     "開心門：讓觀眾想繼續聽",
+        desc:     "演說的第一關：讓觀眾在前 3 分鐘就決定要不要聽你說話",
+        keywords: ["預先框飾", "小Yes發問", "端牛肉演說版"],
+        weeks: [
+          "預先框飾：開場 30 秒決定觀眾願不願意跟你走",
+          "小 Yes 發問：問出觀眾無法抗拒的問題",
+          "端牛肉（演說版）：說出讓整場觀眾眼睛一亮的核心價值",
+          "自我介紹（演說版）：讓觀眾覺得「這個人跟我有關」",
+        ],
+      },
+      {
+        tag:      "Week 5–8 · 專業力核心",
+        name:     "開腦門：讓觀眾覺得你能幫他",
+        desc:     "吸引到觀眾之後，讓他們覺得你說的東西對他真的有用",
+        keywords: ["皮肉骨架構", "乾貨感", "埋雷引爆"],
+        weeks: [
+          "皮·肉·骨：讓觀眾聽懂你的底層邏輯架構",
+          "乾貨 vs 乾貨感：讓觀眾覺得「這個老師很有料」",
+          "埋雷引爆：在成交前放大觀眾的核心痛點",
+          "擴大服務價值：讓觀眾自己說出「這對我太重要了」",
+        ],
+      },
+      {
+        tag:      "Week 9–12 · 推進力核心",
+        name:     "邀成交：讓觀眾現在就採取行動",
+        desc:     "前八週都做對了，最後一關：讓觀眾從「很有收穫」走到「我要報名」",
+        keywords: ["物超所值方案", "測試成交", "感召成交"],
+        weeks: [
+          "物超所值方案：讓觀眾說出心理價值，再給他超出預期",
+          "測試成交：在場上觀察並引導意願指標",
+          "感召成交：用你的願景故事打動觀眾",
+          "摘紅蘋果 × 促青蘋果 × 篩爛蘋果——現場收單三招",
+        ],
+      },
+    ],
+  },
+
+  // ── COMPARE ───────────────────────────────────────────────
+  compare: {
+    sectionTitle: "繼續說完<br>讓觀眾鼓掌離開，<br>還是讓他們主動找你？",
+    intro:        "同樣想學公眾演說，三條路徑的結果差很多。",
+    headers:      ["比較項目", "自己摸索", "練口才 / 上演講課", "吸引式 1vN 公眾演說課"],
+    rows: [
+      ["核心目標",   "說得流暢，但沒有成交結構",     "說得好看，但觀眾聽完走人",              "說完觀眾主動問你，成交率可預期"],
+      ["場景適用",   "靠感覺，每場結果不穩定",        "舞台技巧強，但不知道怎麼轉換成收單",    "從演講到直播，每個場景都有對應的成交結構"],
+      ["長期效果",   "只能等觀眾主動，無法主導節奏",  "技巧好但沒有系統，累積不起來",          "底層邏輯改變，每場演說都是複利累積"],
+    ],
+  },
+
+  // ── TARGET ────────────────────────────────────────────────
+  target: {
+    sectionTitle: "你站上台之後，<br>有沒有遇過<br>這些情況？",
+    intro:        "這些場景，你有沒有覺得很熟悉？",
+    cards: [
+      {
+        icon: "🎤", role: "講師 / 教練",
+        pain: "說完大家說「很有收穫」，但走下台沒有人問報名。",
+        results: ["演說結構調整後，觀眾在台上就開始問怎麼報名", "不用追，學員自己說「我要參加下一期」"],
+      },
+      {
+        icon: "📱", role: "直播主 / 知識創作者",
+        pain: "直播說了很多，觀眾點贊但不下單，不知道問題在哪裡。",
+        results: ["直播中觀眾主動留言問購買方式", "每場直播結束都有穩定的轉換率"],
+      },
+      {
+        icon: "🏢", role: "企業主 / 品牌創辦人",
+        pain: "公司發表會說了很多，但現場成交率很低。",
+        results: ["發表會現場用成交結構，觀眾當場下訂", "一場發表會創造超出預期的業績"],
+      },
+      {
+        icon: "🌿", role: "身心靈 / 療癒工作者",
+        pain: "分享很有深度，觀眾很感動，但沒有轉換成客戶。",
+        results: ["分享完觀眾覺得「我需要這個」並主動詢問", "演說成為你最穩定的招生來源"],
+      },
+      {
+        icon: "💼", role: "業務主管 / 培訓師",
+        pain: "內部培訓說了很多，但團隊回去之後沒有行動。",
+        results: ["培訓後團隊主動問怎麼執行，而不是被動等指令", "每次培訓都有明確的行動轉換"],
+      },
+    ],
+  },
+
+  // ── TESTIMONIALS ──────────────────────────────────────────
+  testimonials: [
+    {
+      result: "一場發表會，3 小時成交 1,000 萬",
+      text:   "用完整的演說成交結構操盤新品發表會，現場觀眾在台上就開始排隊下訂。3 小時創造了 1,000 萬營業額，演說真的是最高效的成交工具。",
+      avatar: "光", name: "光頭老師", meta: "親身實戰案例",
+    },
+    {
+      result: "首場演說，觀眾主動問我報名",
+      text:   "以前說完大家說「很精彩」然後就走了。學完演說成交結構之後，第一場正式演說結束，就有觀眾主動來問下一期怎麼報名。",
+      avatar: "雯", name: "林雅雯", meta: "脈輪舞蹈講師",
+    },
+    {
+      result: "直播成交率從 0 提升到有穩定轉換",
+      text:   "以前直播說得很認真，觀眾點讚但沒有人下單。用了演說成交的結構之後，每場直播結束都有固定比例的觀眾詢問購買。",
+      avatar: "路", name: "路隊長", meta: "Podcaster",
+    },
+  ],
+
+  // ── FAQ ───────────────────────────────────────────────────
+  faqs: [
+    {
+      q: "我很少演講，這個課適合我嗎？",
+      a: "適合。這個課不只是針對演講，直播、線上課說明、社群影片都適用。只要你需要對著超過一個人說話，這套演說成交結構都有效。",
+    },
+    {
+      q: "我已經有在演講了，這個課對我有什麼幫助？",
+      a: "很多有演講經驗的人說得很好，但成交率不穩定。這個課幫你把「說得好」和「成交得了」連起來，讓每場演說都有可預期的轉換。",
+    },
+    {
+      q: "12 週會不會太長？",
+      a: "公眾演說是最複雜的成交場景——你要同時管理吸引力、信任感、專業度和成交節奏。12 週讓你每個維度都練透，說完台下才會有人主動來找你。",
+    },
+    {
+      q: "跟坊間的演講課或口才課有什麼不同？",
+      a: "大多數演講課教你說得好看、說得流暢。這個課教你說完讓觀眾採取行動。核心不是表演，是讓觀眾走過完整的成交心理歷程。",
+    },
+    {
+      q: "上完課多久能看到演說成交率提升？",
+      a: "很多學員在第 4 週練完「開心門」之後，下一場分享觀眾的反應就明顯不一樣了——會開始有人主動留下來問你。完整 12 週，成交率會有系統性提升。",
+    },
+    {
+      q: "課程是線上還是實體？",
+      a: "目前以實體小班制為主，光頭老師可以在現場直接看你演說，給你即時的結構調整。演說技能需要即時回饋才能快速進步。",
+    },
+    {
+      q: "預約諮詢會被推銷嗎？",
+      a: "不會。光頭老師會先聽你說你目前的演說現況，找出你卡在哪個環節，再判斷這個課程是不是真的能幫到你。不適合就直說。",
+    },
+  ],
+
+  // ── CTA ───────────────────────────────────────────────────
+  cta: {
+    title:          "下一場演說，<br>不要再讓觀眾<br>鼓掌走人了。",
+    sub:            "光頭老師將與你 1v1 拆解你的演說結構，找出讓觀眾聽完不行動的真正原因。完全免費。",
+    btnText:        "預約免費諮詢 →",
+    note:           "線上諮詢 · 60 分鐘 · 完全免費",
+    guaranteeBadge: "風險逆轉保證",
+    guaranteeTitle: "7 天無條件退款",
+    guaranteeBody:  "報名後 7 天內，若你覺得這套系統不適合你，全額退款，沒有任何附加條件。你唯一的風險，就是繼續站上台卻讓觀眾鼓掌走人。",
+  },
+
+  // ── FOOTER ────────────────────────────────────────────────
+  footer: {
+    brand:    "光頭老師｜溝通變現塾",
+    subtitle: "LIGHTHEAD COACH · KAIZUBIANZIAN.COM",
+    note:     "© 2025 溝通變現塾 · 平凡人光頭 LINE Official Account<br>All rights reserved.",
+  },
+
+  // ── STICKY BAR ────────────────────────────────────────────
+  sticky: {
+    brand:   "光頭老師｜溝通變現塾",
+    tagline: "讓觀眾聽完主動找上你",
+    btnText: "預約諮詢 →",
+  },
+};
+</script>
+
+<!-- ── NAV ── -->
+<nav>
+  <a class="nav-logo" href="#hero" id="nav-logo">
+    <div class="nav-logo-mark" id="nav-logo-mark"></div>
+    <span class="nav-logo-text" id="nav-brand"></span>
+  </a>
+  <div class="nav-right">
+    <a class="nav-cta" id="nav-cta" target="_blank"></a>
+    <button class="hamburger" id="hamburger" aria-label="選單">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ── MOBILE MENU ── -->
+<div class="mobile-menu" id="mobile-menu">
+  <a href="#philosophy" onclick="closeMenu()">核心觀念</a>
+  <a href="#story"      onclick="closeMenu()">關於老師</a>
+  <a href="#curriculum" onclick="closeMenu()">課程結構</a>
+  <a href="#target"     onclick="closeMenu()">適合對象</a>
+  <a href="#testimonials" onclick="closeMenu()">學員見證</a>
+  <a href="#faq"        onclick="closeMenu()">常見問答</a>
+  <a class="menu-cta" id="mobile-cta" target="_blank" onclick="closeMenu()"></a>
+</div>
+
+<!-- ── HERO ── -->
+<section class="hero" id="hero">
+  <div class="hero-eyebrow" id="hero-eyebrow"></div>
+  <h1 class="hero-title" id="hero-title"></h1>
+  <p class="hero-sub" id="hero-sub"></p>
+  <div class="hero-quote"><p id="hero-quote"></p></div>
+  <a class="hero-cta" id="hero-cta" target="_blank">
+    <span id="hero-cta-text"></span>
+    <span class="hero-cta-arrow">→</span>
+  </a>
+  <div class="hero-stats" id="hero-stats"></div>
+</section>
+
+<!-- ── PHILOSOPHY ── -->
+<section class="section" id="philosophy">
+  <div class="section-label">核心觀念</div>
+  <div class="philosophy-statement" id="philosophy-statement"></div>
+  <div id="philosophy-paragraphs"></div>
+  <div class="highlight-box"><p id="philosophy-highlight"></p></div>
+</section>
+
+<!-- ── STORY ── -->
+<section class="section" style="padding-top:0; background:var(--bg-light-dark);" id="story">
+  <div class="story-image-frame">
+    <img class="story-photo" id="story-photo" alt="">
+    <div class="story-image-overlay"></div>
+    <div class="story-image-label">
+      <div class="tag" id="story-tag"></div>
+      <div class="name" id="story-name"></div>
+      <div class="sub" id="story-subtitle"></div>
+    </div>
+  </div>
+  <div class="story-timeline" id="story-timeline"></div>
+  <div class="credential-box" id="credential-box"></div>
+</section>
+
+<!-- ── CURRICULUM ── -->
+<section class="section section-dark" id="curriculum">
+  <div class="section-label">課程結構</div>
+  <h2 class="section-title" id="curriculum-title"></h2>
+  <p class="curriculum-intro" id="curriculum-intro"></p>
+  <div id="stages"></div>
+</section>
+
+<!-- ── COMPARE ── -->
+<section class="section" id="compare">
+  <div class="section-label">為什麼選這裡 · Compare</div>
+  <h2 class="section-title" id="compare-title"></h2>
+  <p class="section-body" id="compare-intro" style="margin-bottom:12px;"></p>
+  <table class="compare-table" id="compare-table"></table>
+</section>
+
+<!-- ── TARGET ── -->
+<section class="section" id="target">
+  <div class="section-label">適合對象 · Who It's For</div>
+  <h2 class="section-title" id="target-title"></h2>
+  <p class="section-body" id="target-intro" style="margin-bottom:36px;"></p>
+  <div id="target-cards"></div>
+</section>
+
+<!-- ── TESTIMONIALS ── -->
+<section class="section section-dark" id="testimonials">
+  <div class="section-label">學員見證 · Results</div>
+  <h2 class="section-title">上過課的人<br>都這麼說。</h2>
+  <div id="testimonial-cards" style="margin-top:36px;"></div>
+</section>
+
+<!-- ── FAQ ── -->
+<section class="section" id="faq">
+  <div class="section-label">常見問答 · FAQ</div>
+  <h2 class="section-title">你可能想問的。</h2>
+  <div id="faq-items" style="margin-top:36px;"></div>
+</section>
+
+<!-- ── CTA ── -->
+<section class="cta-section" id="cta">
+  <div class="cta-label">下一步 · Next Step</div>
+  <h2 class="cta-title" id="cta-title"></h2>
+  <p class="cta-sub" id="cta-sub"></p>
+  <a class="cta-btn" id="cta-btn" target="_blank"></a>
+  <div class="cta-note" id="cta-note"></div>
+  <div class="guarantee-box">
+    <div class="guarantee-badge" id="guarantee-badge"></div>
+    <div class="guarantee-title" id="guarantee-title"></div>
+    <p class="guarantee-body" id="guarantee-body"></p>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-logo" id="footer-brand"></div>
+  <div class="footer-sub" id="footer-subtitle"></div>
+  <div class="footer-note" id="footer-note"></div>
+</footer>
+
+<!-- ── STICKY BAR ── -->
+<div class="sticky-bar">
+  <div class="sticky-bar-text">
+    <strong id="sticky-brand"></strong>
+    <span id="sticky-tagline"></span>
+  </div>
+  <a class="sticky-bar-btn" id="sticky-btn" target="_blank"></a>
+</div>
+
+<script>
+// ── 渲染 LP 內容 ────────────────────────────────────────────
+(function render() {
+  const c = LP;
+
+  // meta
+  document.getElementById('page-title').textContent = c.meta.title;
+  document.getElementById('page-desc').setAttribute('content', c.meta.description);
+  document.getElementById('og-title').setAttribute('content', c.meta.title);
+  document.getElementById('og-desc').setAttribute('content', c.meta.description);
+  document.getElementById('og-image').setAttribute('content', c.meta.ogImage);
+
+  // nav
+  document.getElementById('nav-logo-mark').textContent = c.nav.logoChar;
+  document.getElementById('nav-brand').textContent     = c.nav.brand;
+  document.getElementById('nav-cta').textContent       = c.nav.ctaText;
+  document.getElementById('nav-cta').href              = c.nav.ctaUrl;
+  document.getElementById('mobile-cta').textContent    = c.nav.ctaText;
+  document.getElementById('mobile-cta').href           = c.nav.ctaUrl;
+
+  // hero
+  document.getElementById('hero-eyebrow').textContent  = c.hero.eyebrow;
+  document.getElementById('hero-title').innerHTML      = c.hero.titleHtml;
+  document.getElementById('hero-sub').textContent      = c.hero.sub;
+  document.getElementById('hero-quote').textContent    = c.hero.quote;
+  document.getElementById('hero-cta-text').textContent = c.hero.ctaText;
+  document.getElementById('hero-cta').href             = c.nav.ctaUrl;
+  document.getElementById('hero-stats').innerHTML      = c.hero.stats.map(s =>
+    `<div><div class="hero-stat-num">${s.num}</div><div class="hero-stat-label">${s.label}</div></div>`
+  ).join('');
+
+  // philosophy
+  document.getElementById('philosophy-statement').innerHTML  = c.philosophy.statement;
+  document.getElementById('philosophy-paragraphs').innerHTML = c.philosophy.paragraphs.map(p =>
+    `<p class="philosophy-body">${p}</p>`
+  ).join('');
+  document.getElementById('philosophy-highlight').innerHTML  = c.philosophy.highlight;
+
+  // story
+  document.getElementById('story-photo').src           = c.story.photo;
+  document.getElementById('story-photo').alt           = c.story.photoAlt;
+  document.getElementById('story-tag').textContent     = c.story.tag;
+  document.getElementById('story-name').textContent    = c.story.name;
+  document.getElementById('story-subtitle').textContent= c.story.title;
+  document.getElementById('story-timeline').innerHTML  = c.story.timeline.map((t, i) =>
+    `<div class="timeline-item" ${i===c.story.timeline.length-1?'style="border-bottom:none;"':''}>
+       <div class="timeline-tag">${t.tag}</div>
+       <div class="timeline-content"><h4>${t.heading}</h4><p>${t.body}</p></div>
+     </div>`
+  ).join('');
+  document.getElementById('credential-box').innerHTML  =
+    c.story.credentials.map(g =>
+      `<div class="credential-group">
+         <div class="credential-group-title">${g.groupTitle}</div>
+         ${g.items.map(i => `<div class="credential-item">${i}</div>`).join('')}
+       </div>`
+    ).join('') +
+    `<div class="credential-stats">${
+      c.story.credentialStats.map(s =>
+        `<div class="credential-stat">
+           <div class="credential-stat-num">${s.num}</div>
+           <div class="credential-stat-label">${s.label}</div>
+         </div>`
+      ).join('')
+    }</div>`;
+
+  // curriculum
+  document.getElementById('curriculum-title').innerHTML = c.curriculum.sectionTitle;
+  document.getElementById('curriculum-intro').textContent = c.curriculum.intro;
+  document.getElementById('stages').innerHTML = c.curriculum.stages.map((s, i) =>
+    `<div class="stage-card">
+       <div class="stage-num">0${i+1}</div>
+       <div class="stage-card-inner">
+         <div class="stage-tag">${s.tag}</div>
+         <div class="stage-name">${s.name}</div>
+         <div class="stage-desc">${s.desc}</div>
+         <div class="stage-keyword-row">${s.keywords.map(k => `<span class="stage-keyword">${k}</span>`).join('')}</div>
+         <div class="week-list">${s.weeks.map((w, wi) =>
+           `<div class="week-item"><span class="week-num">第${i*4+wi+1}週</span><span>${w}</span></div>`
+         ).join('')}</div>
+       </div>
+     </div>`
+  ).join('');
+
+  // compare
+  document.getElementById('compare-title').innerHTML      = c.compare.sectionTitle;
+  document.getElementById('compare-intro').textContent    = c.compare.intro;
+  document.getElementById('compare-table').innerHTML      =
+    `<tr>${c.compare.headers.map((h, i) =>
+      `<th${i===c.compare.headers.length-1?' class="compare-highlight"':''}>${h}</th>`
+    ).join('')}</tr>` +
+    c.compare.rows.map(row =>
+      `<tr>${row.map((cell, i) =>
+        `<td${i===row.length-1?' class="compare-highlight"':''}>${cell}</td>`
+      ).join('')}</tr>`
+    ).join('');
+
+  // target
+  document.getElementById('target-title').innerHTML    = c.target.sectionTitle;
+  document.getElementById('target-intro').textContent  = c.target.intro;
+  document.getElementById('target-cards').innerHTML    = c.target.cards.map(card =>
+    `<div class="target-card">
+       <div class="target-header">
+         <div class="target-icon">${card.icon}</div>
+         <div class="target-role">${card.role}</div>
+       </div>
+       <p class="target-pain">${card.pain}</p>
+       <hr class="target-divider">
+       <div class="target-result-label">上完課，你會</div>
+       ${card.results.map(r => `<div class="target-result-item">${r}</div>`).join('')}
+     </div>`
+  ).join('');
+
+  // testimonials
+  document.getElementById('testimonial-cards').innerHTML = c.testimonials.map(t =>
+    `<div class="testimonial-card">
+       <div class="testimonial-quote-mark">"</div>
+       <div class="testimonial-result">${t.result}</div>
+       <p class="testimonial-text">${t.text}</p>
+       <div class="testimonial-person">
+         <div class="testimonial-avatar">${t.avatar}</div>
+         <div>
+           <div class="testimonial-name">${t.name}</div>
+           <div class="testimonial-meta">${t.meta}</div>
+         </div>
+       </div>
+     </div>`
+  ).join('');
+
+  // faq
+  document.getElementById('faq-items').innerHTML = c.faqs.map((f, i) =>
+    `<div class="faq-item${i===0?' open':''}">
+       <div class="faq-q" onclick="toggleFaq(this)">
+         <span class="faq-num">Q${String(i+1).padStart(2,'0')}</span>
+         <span class="faq-question">${f.q}</span>
+         <span class="faq-toggle">+</span>
+       </div>
+       <div class="faq-a"><p class="faq-answer">${f.a}</p></div>
+     </div>`
+  ).join('');
+
+  // cta
+  document.getElementById('cta-title').innerHTML      = c.cta.title;
+  document.getElementById('cta-sub').textContent      = c.cta.sub;
+  document.getElementById('cta-btn').textContent      = c.cta.btnText;
+  document.getElementById('cta-btn').href             = c.nav.ctaUrl;
+  document.getElementById('cta-note').textContent     = c.cta.note;
+  document.getElementById('guarantee-badge').textContent = c.cta.guaranteeBadge;
+  document.getElementById('guarantee-title').textContent = c.cta.guaranteeTitle;
+  document.getElementById('guarantee-body').textContent  = c.cta.guaranteeBody;
+
+  // footer
+  document.getElementById('footer-brand').textContent    = c.footer.brand;
+  document.getElementById('footer-subtitle').textContent = c.footer.subtitle;
+  document.getElementById('footer-note').innerHTML       = c.footer.note;
+
+  // sticky
+  document.getElementById('sticky-brand').textContent   = c.sticky.brand;
+  document.getElementById('sticky-tagline').textContent = c.sticky.tagline;
+  document.getElementById('sticky-btn').textContent     = c.sticky.btnText;
+  document.getElementById('sticky-btn').href            = c.nav.ctaUrl;
+})();
+
+// ── FAQ toggle ──────────────────────────────────────────────
+function toggleFaq(el) {
+  const item = el.parentElement;
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+// ── Hamburger ───────────────────────────────────────────────
+const hamburger   = document.getElementById('hamburger');
+const mobileMenu  = document.getElementById('mobile-menu');
+hamburger.addEventListener('click', () => {
+  const open = mobileMenu.classList.toggle('open');
+  hamburger.classList.toggle('open', open);
+});
+function closeMenu() {
+  mobileMenu.classList.remove('open');
+  hamburger.classList.remove('open');
+}
+</script>
+</body>
+</html>
