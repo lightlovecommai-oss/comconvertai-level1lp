@@ -179,10 +179,13 @@
   .section-dark .section-body { color: #999; }
 
   /* ── HIGHLIGHT BANNER ── */
-  .highlight-banner { background: var(--bg-dark); padding: 28px 28px; text-align: center; border-bottom: 3px solid var(--gold); }
-  .highlight-banner-eyebrow { font-family: var(--font-latin); font-size: 10px; letter-spacing: 0.3em; color: var(--accent); text-transform: uppercase; margin-bottom: 12px; }
-  .highlight-banner-text { font-family: var(--font-serif); font-size: clamp(18px, 5vw, 26px); font-weight: 900; color: var(--white); line-height: 1.5; }
-  .highlight-banner-text em { font-style: normal; color: var(--gold); }
+  .highlight-banner { background: var(--accent); }
+  .highlight-banner-inner { display: grid; grid-template-columns: 1fr 48px 1fr; align-items: center; }
+  .highlight-banner-block { padding: 36px 20px; text-align: center; }
+  .highlight-banner-block + .highlight-banner-block { border-left: 1px solid rgba(255,255,255,0.2); }
+  .highlight-banner-num { font-family: var(--font-serif); font-size: clamp(28px, 8vw, 42px); font-weight: 900; color: white; line-height: 1; margin-bottom: 8px; }
+  .highlight-banner-label { font-family: var(--font-sans); font-size: 12px; color: rgba(255,255,255,0.75); letter-spacing: 0.12em; }
+  .highlight-banner-plus { text-align: center; font-family: var(--font-latin); font-size: 24px; font-weight: 300; color: rgba(255,255,255,0.5); }
 
   /* ── PHILOSOPHY ── */
   .philosophy-statement {
@@ -669,8 +672,17 @@ const LP = {
 
 <!-- ── HIGHLIGHT BANNER ── -->
 <div class="highlight-banner">
-  <div class="highlight-banner-eyebrow">課程承諾</div>
-  <div class="highlight-banner-text" id="banner-text"></div>
+  <div class="highlight-banner-inner">
+    <div class="highlight-banner-block">
+      <div class="highlight-banner-num">1 個月</div>
+      <div class="highlight-banner-label">系統上課</div>
+    </div>
+    <div class="highlight-banner-plus">+</div>
+    <div class="highlight-banner-block">
+      <div class="highlight-banner-num">1 個月</div>
+      <div class="highlight-banner-label">實境陪跑</div>
+    </div>
+  </div>
 </div>
 
 <!-- ── PHILOSOPHY ── -->
