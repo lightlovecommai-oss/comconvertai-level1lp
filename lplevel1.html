@@ -179,13 +179,21 @@
   .section-dark .section-body { color: #999; }
 
   /* ── HIGHLIGHT BANNER ── */
-  .highlight-banner { background: var(--accent); }
-  .highlight-banner-inner { display: grid; grid-template-columns: 1fr 48px 1fr; align-items: center; }
-  .highlight-banner-block { padding: 36px 20px; text-align: center; }
-  .highlight-banner-block + .highlight-banner-block { border-left: 1px solid rgba(255,255,255,0.2); }
-  .highlight-banner-num { font-family: var(--font-serif); font-size: clamp(28px, 8vw, 42px); font-weight: 900; color: white; line-height: 1; margin-bottom: 8px; }
-  .highlight-banner-label { font-family: var(--font-sans); font-size: 12px; color: rgba(255,255,255,0.75); letter-spacing: 0.12em; }
-  .highlight-banner-plus { text-align: center; font-family: var(--font-latin); font-size: 24px; font-weight: 300; color: rgba(255,255,255,0.5); }
+  .highlight-banner { background: #0a0e12; border-top: 3px solid var(--accent); }
+  .highlight-banner-inner { display: grid; grid-template-columns: 1fr 1px 1fr; }
+  .highlight-banner-divider { background: #2a2a2a; margin: 32px 0; }
+  .highlight-banner-block { padding: 52px 28px; }
+  .highlight-banner-tag { font-family: var(--font-latin); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; }
+  .highlight-banner-block.before .highlight-banner-tag { color: #444; }
+  .highlight-banner-block.after  .highlight-banner-tag { color: var(--accent); }
+  .highlight-banner-heading { font-family: var(--font-serif); font-weight: 900; line-height: 1.35; }
+  .highlight-banner-block.before .highlight-banner-heading { font-size: clamp(15px, 4vw, 18px); color: #444; position: relative; display: inline-block; }
+  .highlight-banner-block.before .highlight-banner-heading::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 2px; background: #555; }
+  .highlight-banner-system { font-family: var(--font-serif); font-size: clamp(32px, 9vw, 48px); font-weight: 900; color: var(--gold); line-height: 1; margin-bottom: 10px; }
+  .highlight-banner-block.after  .highlight-banner-heading { font-size: clamp(14px, 3.5vw, 16px); color: #bbb; font-weight: 400; }
+  .highlight-banner-sub { margin-top: 16px; font-size: 11px; color: #555; line-height: 1.7; letter-spacing: 0.06em; border-top: 1px solid #222; padding-top: 14px; }
+  .highlight-banner-block.before .highlight-banner-sub { color: #444; }
+  .highlight-banner-block.after  .highlight-banner-sub { color: #666; }
 
   /* ── PHILOSOPHY ── */
   .philosophy-statement {
@@ -670,21 +678,6 @@ const LP = {
   <div class="hero-stats" id="hero-stats"></div>
 </section>
 
-<!-- ── HIGHLIGHT BANNER ── -->
-<div class="highlight-banner">
-  <div class="highlight-banner-inner">
-    <div class="highlight-banner-block">
-      <div class="highlight-banner-num">1 個月</div>
-      <div class="highlight-banner-label">系統上課</div>
-    </div>
-    <div class="highlight-banner-plus">+</div>
-    <div class="highlight-banner-block">
-      <div class="highlight-banner-num">1 個月</div>
-      <div class="highlight-banner-label">實境陪跑</div>
-    </div>
-  </div>
-</div>
-
 <!-- ── PHILOSOPHY ── -->
 <section class="section" id="philosophy">
   <div class="section-label">核心觀念</div>
@@ -755,6 +748,24 @@ const LP = {
     <a class="cta-secondary" target="_blank">報名上課</a>
   </div>
 </section>
+
+<!-- ── HIGHLIGHT BANNER ── -->
+<div class="highlight-banner">
+  <div class="highlight-banner-inner">
+    <div class="highlight-banner-block before">
+      <div class="highlight-banner-tag">很多人的經驗</div>
+      <div class="highlight-banner-heading">上完課，<br>然後就沒有然後了</div>
+      <div class="highlight-banner-sub">知道了，但還是不會用</div>
+    </div>
+    <div class="highlight-banner-divider"></div>
+    <div class="highlight-banner-block after">
+      <div class="highlight-banner-tag">溝通變現塾</div>
+      <div class="highlight-banner-system">1＋1 系統</div>
+      <div class="highlight-banner-heading">1個月學習＋1個月實戰</div>
+      <div class="highlight-banner-sub">學完有人陪你走到真的會</div>
+    </div>
+  </div>
+</div>
 
 <!-- ── TARGET ── -->
 <section class="section" id="target">
