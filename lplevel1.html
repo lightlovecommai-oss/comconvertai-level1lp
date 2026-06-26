@@ -178,6 +178,12 @@
   .section-body { font-size: 14px; line-height: 1.9; color: #555; max-width: 480px; }
   .section-dark .section-body { color: #999; }
 
+  /* ── HIGHLIGHT BANNER ── */
+  .highlight-banner { background: var(--bg-dark); padding: 28px 28px; text-align: center; border-bottom: 3px solid var(--gold); }
+  .highlight-banner-eyebrow { font-family: var(--font-latin); font-size: 10px; letter-spacing: 0.3em; color: var(--accent); text-transform: uppercase; margin-bottom: 12px; }
+  .highlight-banner-text { font-family: var(--font-serif); font-size: clamp(18px, 5vw, 26px); font-weight: 900; color: var(--white); line-height: 1.5; }
+  .highlight-banner-text em { font-style: normal; color: var(--gold); }
+
   /* ── PHILOSOPHY ── */
   .philosophy-statement {
     font-family: var(--font-serif); font-size: clamp(22px, 6vw, 32px);
@@ -341,11 +347,12 @@ const LP = {
 
   // ── NAV ───────────────────────────────────────────────────
   nav: {
-    brand:   "溝通變現塾",
-    logoChar:"光",
-    ctaText:   "預約免費諮詢 →",
-    ctaUrl:    "https://calendly.com/lightlovecomm/60min",
-    enrollUrl: "https://lin.ee/r6two2F",
+    brand:      "溝通變現塾",
+    logoChar:   "光",
+    ctaText:    "預約免費諮詢 →",
+    ctaUrl:     "https://calendly.com/lightlovecomm/60min",
+    enrollUrl:  "https://lin.ee/r6two2F",
+    bannerHtml: "不只是 <em>1 個月</em>上課，還有 <em>1 個月</em>實境陪跑",
   },
 
   // ── HERO ──────────────────────────────────────────────────
@@ -660,6 +667,12 @@ const LP = {
   <div class="hero-stats" id="hero-stats"></div>
 </section>
 
+<!-- ── HIGHLIGHT BANNER ── -->
+<div class="highlight-banner">
+  <div class="highlight-banner-eyebrow">課程承諾</div>
+  <div class="highlight-banner-text" id="banner-text"></div>
+</div>
+
 <!-- ── PHILOSOPHY ── -->
 <section class="section" id="philosophy">
   <div class="section-label">核心觀念</div>
@@ -802,6 +815,9 @@ const LP = {
   document.getElementById('og-title').setAttribute('content', c.meta.title);
   document.getElementById('og-desc').setAttribute('content', c.meta.description);
   document.getElementById('og-image').setAttribute('content', c.meta.ogImage);
+
+  // banner
+  document.getElementById('banner-text').innerHTML = c.nav.bannerHtml;
 
   // nav
   document.getElementById('nav-logo-mark').textContent = c.nav.logoChar;
