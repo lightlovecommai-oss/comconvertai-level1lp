@@ -309,6 +309,15 @@
   .atpi-card-miss { font-size: 11px; color: var(--text-muted); background: var(--bg-light-dark); padding: 8px 10px; line-height: 1.6; }
   @media (max-width: 520px) { .atpi-grid { grid-template-columns: 1fr; } }
 
+  /* ── CTA PAIR ── */
+  .cta-pair { display: flex; flex-direction: column; gap: 12px; margin-top: 32px; }
+  .cta-primary { display: flex; justify-content: center; align-items: center; background: var(--accent); color: white; text-decoration: none; padding: 16px 32px; font-size: 14px; letter-spacing: 0.08em; font-family: var(--font-sans); transition: background 0.2s; }
+  .cta-primary:hover { background: var(--accent-light); }
+  .cta-secondary { display: flex; justify-content: center; align-items: center; background: transparent; color: var(--text-muted); text-decoration: none; padding: 13px 32px; font-size: 13px; letter-spacing: 0.08em; font-family: var(--font-sans); border: 1px solid #ccc; transition: all 0.2s; }
+  .cta-secondary:hover { border-color: var(--accent); color: var(--accent); }
+  .section-dark .cta-secondary { color: #777; border-color: #444; }
+  .section-dark .cta-secondary:hover { border-color: var(--gold); color: var(--gold); }
+
   /* ── FOOTER ── */
   footer { background: #1c1410; padding: 40px 28px 120px; text-align: center; }
   .footer-logo { font-family: var(--font-serif); font-size: 18px; font-weight: 900; color: white; margin-bottom: 8px; }
@@ -334,8 +343,9 @@ const LP = {
   nav: {
     brand:   "溝通變現塾",
     logoChar:"光",
-    ctaText: "預約免費諮詢 →",
-    ctaUrl:  "https://calendly.com/lightlovecomm/60min",
+    ctaText:   "預約免費諮詢 →",
+    ctaUrl:    "https://calendly.com/lightlovecomm/60min",
+    enrollUrl: "https://lin.ee/r6two2F",
   },
 
   // ── HERO ──────────────────────────────────────────────────
@@ -486,7 +496,7 @@ const LP = {
   // ── COMPARE ───────────────────────────────────────────────
   compare: {
     sectionTitle: "不只是一堂課，<br>是陪你<br>真正改變的系統",
-    intro:        "坊間課程教你怎麼說，這裡陪你說到真的會。",
+    intro:        "常規課程教你怎麼說，這裡陪你說到真的會。",
     headers:      ["比較項目", "常規課程", "溝通變現塾特色"],
     rows: [
       ["實戰陪跑", "上課聽完，靠自己摸索怎麼用",       "團隊全程陪跑，即時校正你的盲點"],
@@ -652,6 +662,10 @@ const LP = {
   <div class="philosophy-statement" id="philosophy-statement"></div>
   <div id="philosophy-paragraphs"></div>
   <div class="highlight-box"><p id="philosophy-highlight"></p></div>
+  <div class="cta-pair">
+    <a class="cta-primary" target="_blank">預約諮詢</a>
+    <a class="cta-secondary" target="_blank">報名上課</a>
+  </div>
 </section>
 
 <!-- ── STORY ── -->
@@ -667,6 +681,10 @@ const LP = {
   </div>
   <div class="story-timeline" id="story-timeline"></div>
   <div class="credential-box" id="credential-box"></div>
+  <div class="cta-pair">
+    <a class="cta-primary" target="_blank">預約諮詢</a>
+    <a class="cta-secondary" target="_blank">報名上課</a>
+  </div>
 </section>
 
 <!-- ── ATPI ── -->
@@ -679,6 +697,10 @@ const LP = {
     <span class="atpi-formula-sub" id="atpi-formula-sub"></span>
   </div>
   <div class="atpi-grid" id="atpi-grid"></div>
+  <div class="cta-pair">
+    <a class="cta-primary" target="_blank">預約諮詢</a>
+    <a class="cta-secondary" target="_blank">報名上課</a>
+  </div>
 </section>
 
 <!-- ── CURRICULUM ── -->
@@ -687,6 +709,10 @@ const LP = {
   <h2 class="section-title" id="curriculum-title"></h2>
   <p class="curriculum-intro" id="curriculum-intro"></p>
   <div id="stages"></div>
+  <div class="cta-pair">
+    <a class="cta-primary" target="_blank">預約諮詢</a>
+    <a class="cta-secondary" target="_blank">報名上課</a>
+  </div>
 </section>
 
 <!-- ── COMPARE ── -->
@@ -695,6 +721,10 @@ const LP = {
   <h2 class="section-title" id="compare-title"></h2>
   <p class="section-body" id="compare-intro" style="margin-bottom:12px;"></p>
   <table class="compare-table" id="compare-table"></table>
+  <div class="cta-pair">
+    <a class="cta-primary" target="_blank">預約諮詢</a>
+    <a class="cta-secondary" target="_blank">報名上課</a>
+  </div>
 </section>
 
 <!-- ── TARGET ── -->
@@ -703,6 +733,10 @@ const LP = {
   <h2 class="section-title" id="target-title"></h2>
   <p class="section-body" id="target-intro" style="margin-bottom:36px;"></p>
   <div id="target-cards"></div>
+  <div class="cta-pair">
+    <a class="cta-primary" target="_blank">預約諮詢</a>
+    <a class="cta-secondary" target="_blank">報名上課</a>
+  </div>
 </section>
 
 <!-- ── TESTIMONIALS ── -->
@@ -710,6 +744,10 @@ const LP = {
   <div class="section-label">學員見證 · Results</div>
   <h2 class="section-title">上過課的人<br>都這麼說。</h2>
   <div id="testimonial-cards" style="margin-top:36px;"></div>
+  <div class="cta-pair" style="margin-top:40px;">
+    <a class="cta-primary" target="_blank">預約諮詢</a>
+    <a class="cta-secondary" target="_blank">報名上課</a>
+  </div>
 </section>
 
 <!-- ── FAQ ── -->
@@ -919,6 +957,10 @@ const LP = {
   document.getElementById('footer-brand').textContent    = c.footer.brand;
   document.getElementById('footer-subtitle').textContent = c.footer.subtitle;
   document.getElementById('footer-note').innerHTML       = c.footer.note;
+
+  // cta pair buttons
+  document.querySelectorAll('.cta-primary').forEach(el => el.href = c.nav.ctaUrl);
+  document.querySelectorAll('.cta-secondary').forEach(el => el.href = c.nav.enrollUrl);
 
   // sticky
   document.getElementById('sticky-brand').textContent   = c.sticky.brand;
