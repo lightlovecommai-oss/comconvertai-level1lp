@@ -1,0 +1,9 @@
+# lp.atpifit.com — 廣告到達頁
+#
+# 這個子網域不進搜尋索引：只服務廣告流量（廣告不需要自然排名），而且這批頁面
+# 未來會退役。退出索引是靠每頁的 <meta name="robots" content="noindex">，
+# 這裡刻意「允許爬取」——用 Disallow 擋住反而會讓 Google 讀不到那個 noindex，
+# 網址照樣可能以裸連結的形式出現在搜尋結果裡。
+
+User-agent: *
+Allow: /
