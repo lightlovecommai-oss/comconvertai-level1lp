@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<!--
+  ⚠️ 這頁不是 LP，是「通路提案書」，只是借 lp 子網域的託管行為（單頁・對外・不索引・會退役）。
+  真相在 productkit/9-Lily沙龍會通路/00-企劃書.html —— 要改內容改那邊，再複製過來。
+  🔴 LP1/2/3 改版時不要動這個資料夾，它跟 LP 產品線無關。
+-->
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, follow">
+<title>Lily 沙龍會 × 光頭｜講師培訓企劃書</title>
+<style>
+  :root {
+    --paper: #FDF8F3;
+    --card: #FFFFFF;
+    --peach: #FDF0E6;
+    --ink: #4A3428;
+    --ink-soft: #857A70;
+    --rust: #C1553A;
+    --gold: #D4A34A;
+    --green: #6B8A72;
+    --blue: #5B7A99;
+    --line: #EDE2D6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+    font-size: 20px;
+    line-height: 1.9;
+    -webkit-font-smoothing: antialiased;
+  }
+  /* 中文斷行：不讓標點孤行、不在詞中間斷 */
+  p, h1, h2, h3, h4, .title, .subtitle, .verdict, .fit, .closing {
+    text-wrap: pretty;
+    line-break: strict;
+    overflow-wrap: break-word;
+  }
+  main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 70px 44px 100px;
+  }
+
+  /* ── 封面 ── */
+  header {
+    margin-bottom: 72px;
+    padding-bottom: 40px;
+    border-bottom: 2px solid var(--line);
+  }
+  header .for {
+    font-size: 17px;
+    color: var(--rust);
+    letter-spacing: 4px;
+    margin-bottom: 18px;
+  }
+  header h1 {
+    font-size: 42px;
+    line-height: 1.4;
+    margin: 0 0 20px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+  header .sub {
+    font-size: 22px;
+    color: var(--ink-soft);
+    line-height: 1.8;
+  }
+
+  /* ── 區塊 ── */
+  section { margin-bottom: 80px; }
+  h2 {
+    font-size: 30px;
+    font-weight: 700;
+    margin: 0 0 12px;
+    letter-spacing: 1px;
+  }
+  h2 .num {
+    display: inline-block;
+    background: var(--rust);
+    color: #fff;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 44px;
+    font-size: 22px;
+    margin-right: 14px;
+    vertical-align: 4px;
+  }
+  .note {
+    font-size: 19px;
+    color: var(--ink-soft);
+    margin: 0 0 28px;
+    padding-left: 58px;
+  }
+
+  /* ── 兩極痛點 ── */
+  .pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .pain {
+    background: var(--card);
+    border-radius: 18px;
+    padding: 32px 30px;
+    box-shadow: 0 2px 10px rgba(74,52,40,0.05);
+  }
+  .pain .tag {
+    display: inline-block;
+    background: var(--peach);
+    color: var(--rust);
+    font-size: 17px;
+    font-weight: 700;
+    padding: 5px 18px;
+    border-radius: 999px;
+    margin-bottom: 16px;
+  }
+  .pain h3 {
+    font-size: 26px;
+    margin: 0 0 12px;
+    font-weight: 700;
+    line-height: 1.5;
+  }
+  .pain p {
+    font-size: 19px;
+    color: var(--ink-soft);
+    margin: 0;
+    line-height: 1.85;
+  }
+  .verdict {
+    background: var(--peach);
+    border-radius: 18px;
+    padding: 30px 36px;
+    margin-top: 24px;
+    font-size: 24px;
+    line-height: 1.8;
+    text-align: center;
+    font-weight: 600;
+  }
+  .verdict em { color: var(--rust); font-style: normal; }
+
+  /* ── 標題選項 ── */
+  .opt {
+    background: var(--card);
+    border-radius: 18px;
+    padding: 32px 34px;
+    margin-bottom: 22px;
+    box-shadow: 0 2px 10px rgba(74,52,40,0.05);
+    position: relative;
+  }
+  .opt .badge {
+    position: absolute;
+    top: -12px;
+    right: 28px;
+    background: var(--gold);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    padding: 5px 20px;
+    border-radius: 999px;
+    letter-spacing: 1px;
+  }
+  .opt .letter {
+    display: inline-block;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--peach);
+    color: var(--rust);
+    text-align: center;
+    line-height: 38px;
+    font-size: 19px;
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+  .opt .title {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.5;
+    margin-bottom: 10px;
+  }
+  .opt .subtitle {
+    font-size: 19px;
+    color: var(--ink-soft);
+    margin-bottom: 18px;
+  }
+  .opt .fit {
+    font-size: 18px;
+    color: var(--green);
+    background: #F1F5F1;
+    padding: 12px 20px;
+    border-radius: 10px;
+    line-height: 1.75;
+  }
+
+  /* ── 流程時間軸 ── */
+  .flow {
+    background: var(--card);
+    border-radius: 24px;
+    padding: 44px 40px 36px;
+    box-shadow: 0 2px 14px rgba(74,52,40,0.06);
+  }
+  .flow-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 34px;
+  }
+  .stops { position: relative; padding-left: 52px; }
+  .stops::before {
+    content: "";
+    position: absolute;
+    left: 15px;
+    top: 16px;
+    bottom: 34px;
+    width: 3px;
+    background: linear-gradient(180deg, var(--rust), var(--green), var(--blue), var(--gold));
+    border-radius: 2px;
+  }
+  .stop { position: relative; padding-bottom: 32px; }
+  .stop:last-child { padding-bottom: 0; }
+  .stop .dot {
+    position: absolute;
+    left: -52px;
+    top: 8px;
+    width: 33px;
+    height: 33px;
+    border-radius: 50%;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .stop .dot i {
+    width: 17px;
+    height: 17px;
+    border-radius: 50%;
+    display: block;
+  }
+  .stop:nth-child(1) .dot i { background: var(--rust); }
+  .stop:nth-child(2) .dot i { background: var(--green); }
+  .stop:nth-child(3) .dot i { background: var(--blue); }
+  .stop:nth-child(4) .dot i { background: var(--gold); }
+  .stop:nth-child(5) .dot i { background: var(--rust); }
+  .stop .body {
+    background: var(--peach);
+    border-radius: 14px;
+    padding: 22px 26px;
+  }
+  .stop .time {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--rust);
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+  .stop h4 {
+    font-size: 25px;
+    font-weight: 700;
+    margin: 0 0 8px;
+    line-height: 1.5;
+  }
+  .stop p {
+    font-size: 19px;
+    color: var(--ink-soft);
+    margin: 0;
+    line-height: 1.8;
+  }
+
+  /* ── 價值三件 ── */
+  .gifts {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+  }
+  .gift {
+    background: var(--card);
+    border-radius: 18px;
+    padding: 34px 26px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(74,52,40,0.05);
+  }
+  .gift .icon {
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    margin: 0 auto 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .gift:nth-child(1) .icon { background: var(--rust); }
+  .gift:nth-child(2) .icon { background: var(--green); }
+  .gift:nth-child(3) .icon { background: var(--blue); }
+  .gift h4 {
+    font-size: 23px;
+    font-weight: 700;
+    margin: 0 0 8px;
+    line-height: 1.5;
+  }
+  .gift .when {
+    font-size: 16px;
+    color: var(--gold);
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+  }
+  .gift p {
+    font-size: 18px;
+    color: var(--ink-soft);
+    margin: 0;
+    line-height: 1.8;
+  }
+  .gift .go {
+    display: inline-block;
+    margin-top: 16px;
+    padding: 11px 20px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    background: var(--rust);
+    border-radius: 999px;
+    text-decoration: none;
+  }
+  .gift .url {
+    margin-top: 9px;
+    font-size: 15px;
+    color: var(--ink-soft);
+    letter-spacing: .3px;
+  }
+
+  .closing {
+    text-align: center;
+    font-size: 27px;
+    line-height: 1.85;
+    color: var(--rust);
+    padding: 46px 20px 10px;
+    border-top: 2px solid var(--line);
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+  .closing small {
+    display: block;
+    margin-top: 26px;
+    font-size: 16px;
+    color: var(--ink-soft);
+    letter-spacing: 3px;
+    font-weight: 400;
+  }
+
+  @media (max-width: 760px) {
+    body { font-size: 19px; }
+    main { padding: 44px 22px 70px; }
+    header h1 { font-size: 32px; }
+    .pair, .gifts { grid-template-columns: 1fr; }
+    .note { padding-left: 0; }
+    .flow { padding: 30px 22px; }
+  }
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <div class="for">給 Lily 曾慧俐老師</div>
+  <h1>把 30 分鐘的沙龍會，<br>變成一條講愛也能收單的路</h1>
+  <div class="sub">講師培訓・2 小時線上課程企劃</div>
+</header>
+
+<section>
+  <h2><span class="num">1</span>老師群卡在哪</h2>
+  <div class="pair">
+    <div class="pain">
+      <span class="tag">狀況一</span>
+      <h3>乾貨講太多</h3>
+      <p>30 分鐘塞滿知識。聽眾說「你講得真好」，然後就走了。</p>
+    </div>
+    <div class="pain">
+      <span class="tag">狀況二</span>
+      <h3>太想推銷</h3>
+      <p>怕沒人約，講得太急。聽眾一感覺到，就關上了。</p>
+    </div>
+  </div>
+  <div class="verdict">
+    這兩種看起來相反，其實是<em>同一件事沒做</em>──<br>
+    沒有讓聽眾，<em>自己看見自己</em>。
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">2</span>三個標題方向</h2>
+  <p class="note">三個都通，差別在打哪一種心理。請老師挑一個。</p>
+
+  <div class="opt">
+    <div class="badge">建議主打</div>
+    <span class="letter">A</span>
+    <div class="title">從療癒到約診：沙龍會的成交肌肉怎麼練？</div>
+    <div class="subtitle">副標：30 分鐘、3 塊肌肉，讓對的人走到下一步</div>
+    <div class="fit">打的是<strong>具體情境</strong>。「療癒 → 約診」一看就知道在講什麼場合，不會被誤解成一般業務課。三個裡最不含糊的一個。</div>
+  </div>
+
+  <div class="opt">
+    <span class="letter">B</span>
+    <div class="title">諮商講師偷用的「引導成交」3 招</div>
+    <div class="subtitle">副標：30 分鐘的場，讓聽眾自己說「我想跟你聊聊」</div>
+    <div class="fit">打的是<strong>好奇心</strong>。「諮商講師」是自己人的身份、「偷用」有秘密感、「3 招」給了邊界。最好轉發的一個。</div>
+  </div>
+
+  <div class="opt">
+    <span class="letter">C</span>
+    <div class="title">影響力健身房：鍛鍊 4 大肌肉，講出觀眾會行動的秘訣</div>
+    <div class="subtitle">副標：30 分鐘沙龍會，從感動到行動的最後一哩</div>
+    <div class="fit">打的是<strong>方法感</strong>。掛上「影響力健身房」等於說：這是一套可以練的系統，不是講師的個人天分。「4 大肌肉」給了結構，「會行動」承諾的是結果、不是技巧。三個裡最像一門完整的課，也最適合 Lily 老師長期掛名。</div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">3</span>2 小時怎麼走</h2>
+  <p class="note">一句話：30 分鐘的沙龍會，不是縮短版的演講，是另一種結構。</p>
+
+  <div class="flow">
+    <div class="flow-title">培訓當天・五站</div>
+    <div class="stops">
+
+      <div class="stop">
+        <div class="dot"><i></i></div>
+        <div class="body">
+          <div class="time">0 – 15 分</div>
+          <h4>先講「你的那一天」</h4>
+          <p>不自我介紹。從一場沙龍會結束後的畫面開始──有人流淚、有人擁抱，然後散了。</p>
+        </div>
+      </div>
+
+      <div class="stop">
+        <div class="dot"><i></i></div>
+        <div class="body">
+          <div class="time">15 – 40 分</div>
+          <h4>為什麼兩種都沒用</h4>
+          <p>拆開乾貨與推銷的共同盲點，給出一張地圖：<strong>影響力的四塊肌肉</strong>，有先後順序。</p>
+        </div>
+      </div>
+
+      <div class="stop">
+        <div class="dot"><i></i></div>
+        <div class="body">
+          <div class="time">40 – 70 分</div>
+          <h4>三招，今天就能用</h4>
+          <p>開場怎麼講自己的故事、怎麼用問句讓對方開口、怎麼收尾不像推銷。當場練、當場改。</p>
+        </div>
+      </div>
+
+      <div class="stop">
+        <div class="dot"><i></i></div>
+        <div class="body">
+          <div class="time">70 – 95 分</div>
+          <h4>現場改造一位老師</h4>
+          <p>請一位老師把她的 30 分鐘沙龍會攤開，當場拆給大家看：哪一塊沒到位、要補在哪。</p>
+        </div>
+      </div>
+
+      <div class="stop">
+        <div class="dot"><i></i></div>
+        <div class="body">
+          <div class="time">95 – 120 分</div>
+          <h4>找到你自己的缺口</h4>
+          <p>每位老師看自己的健檢分數，對照四種典型症狀，知道下一步先練哪一塊。</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">4</span>老師會帶走什麼</h2>
+  <p class="note">不只是聽一場課。走出來，手上有三件具體的東西。</p>
+  <div class="gifts">
+    <div class="gift">
+      <div class="icon">1</div>
+      <h4>影響力健檢</h4>
+      <div class="when">報名就送</div>
+      <p>15 題、5 分鐘。量出自己四塊肌肉的分數，知道缺口在哪一塊。</p>
+      <a class="go" href="https://quiz.atpifit.com/" target="_blank" rel="noopener">▸ 老師可以先測一次</a>
+      <div class="url">quiz.atpifit.com</div>
+    </div>
+    <div class="gift">
+      <div class="icon">2</div>
+      <h4>影響力健身房</h4>
+      <div class="when">課後可加入</div>
+      <p>每週練一塊肌肉。有進度、有社群，不用等下一場才能練。</p>
+    </div>
+    <div class="gift">
+      <div class="icon">3</div>
+      <h4>沙龍會版型</h4>
+      <div class="when">課後帶回</div>
+      <p>一張結構表：開場、快贏、缺口、邀請。下一場直接套用。</p>
+    </div>
+  </div>
+</section>
+
+<div class="closing">
+  錢是愛的代幣。<br>
+  付出愛 → 產生貢獻 → 錢自然來。
+  <small>企劃書 v2 ・ 2026-09-15 ・ 光頭 × Lily</small>
+</div>
+
+</main>
+</body>
+</html>
