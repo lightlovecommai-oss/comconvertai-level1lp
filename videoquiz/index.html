@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  短影音課・課前調查（一頁式）。借 lp 子網域的託管行為，跟 LP 產品線無關——同 /lily/ 的先例。
+  短影音０上手培訓・課前調查（一頁式）。借 lp 子網域的託管行為，跟 LP 產品線無關——同 /lily/ 的先例。
   真相在 productkit/10-直銷團隊-天麗專案/短影音/04-課前調查.md（題目、選項、為什麼這樣問）。
 
   🔴 受眾是不太用網路的人：所有字級走 rem，改 html 的 font-size 就整頁一起放大，
@@ -16,7 +16,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, follow">
-<title>短影音課・課前 30 秒調查｜光頭</title>
+<title>短影音０上手培訓・課前 30 秒調查｜光頭</title>
 <meta name="description" content="上課前先讓我知道你在哪裡：腳本、拍攝、剪輯三個能力，五題選一選。">
 <style>
   :root {
@@ -188,6 +188,13 @@
     margin-bottom: 26px;
   }
   .done-box p { font-size: 1rem; line-height: 1.85; margin: 0 0 16px; }
+  /* 海報直式 4:5。width 用 % 不用 rem——按「放大字」時字要變大，
+     但圖跟著放大只會擠掉版面，圖本身已經夠大了。 */
+  .poster {
+    display: block; width: 100%; max-width: 420px; height: auto;
+    margin: 24px auto 28px; border-radius: 18px;
+    box-shadow: 0 8px 24px rgba(74, 52, 40, .13);
+  }
   .go {
     display: inline-block;
     margin-top: 22px;
@@ -267,7 +274,7 @@
   </div>
 
   <header>
-    <div class="for">短影音 0 上手培訓・課前調查</div>
+    <div class="for">短影音０上手培訓・課前調查</div>
     <h1>上課前，先讓我知道你在哪裡</h1>
     <div class="sub">五題，選一選就好。不用登入、不會公開、大概 30 秒。</div>
     <div class="why">
@@ -294,6 +301,13 @@
     <div class="nth" id="nth"></div>
     <p>我會照大家的答案調整課程內容，<br>把時間花在多數人卡住的那一塊。</p>
     <p><b>9/27（日）晚上 8:00，線上見。</b></p>
+
+    <!-- 海報：真相＋產生器在 productkit/10-直銷團隊-天麗專案/短影音/2-海報/，
+         改字改那支 .py 再跑 `python3 gen_短影音海報.py --publish` 蓋掉這張。
+         loading=lazy：它在 done-box 裡，答完題才會被看到，不該拖慢首屏。 -->
+    <img class="poster" src="poster.png" loading="lazy"
+         alt="短影音０上手培訓：從 500 粉到 3 個月 5000 粉、變現 4x 萬。敢比會更重要，每週會拍一部片的培訓。">
+
     <a class="go" href="https://atpifit.com/" target="_blank" rel="noopener">▸ 順便看看我平常在做什麼</a>
   </div>
 
