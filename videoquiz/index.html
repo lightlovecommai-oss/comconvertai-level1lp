@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<!--
+  短影音課・課前調查（一頁式）。借 lp 子網域的託管行為，跟 LP 產品線無關——同 /lily/ 的先例。
+  真相在 productkit/10-直銷團隊-天麗專案/短影音/04-課前調查.md（題目、選項、為什麼這樣問）。
+
+  🔴 受眾是不太用網路的人：所有字級走 rem，改 html 的 font-size 就整頁一起放大，
+     右上角那顆「放大字」就是在改它。**不要把字級寫回 px**，寫回去那顆鈕就失效。
+  🔴 頁面刻意不提天麗、不提收入。公開頁掛品牌名要對方同意，講收入碰直銷法規；
+     這頁只需要知道「你會不會」，兩個都不必要。
+  🔴 收 email 要能用，得先部署 apps-script.gs 並把網址貼進下面的 SHEET_API。
+     送出時打兩支：SHEET_API（五題答案＋人數・備課用）＋ NEWSLETTER_API（官網既有的
+     action=subscribe・養課用）。養課那條刻意重用官網的路，不另開 workflow。
+-->
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, follow">
+<title>短影音課・課前 30 秒調查｜光頭</title>
+<meta name="description" content="上課前先讓我知道你在哪裡：腳本、拍攝、剪輯三個能力，五題選一選。">
+<style>
+  :root {
+    --paper: #FDF8F3;
+    --card: #FFFFFF;
+    --peach: #FDF0E6;
+    --ink: #4A3428;
+    --ink-soft: #857A70;
+    --rust: #C1553A;
+    --gold: #D4A34A;
+    --green: #6B8A72;
+    --blue: #5B7A99;
+    --line: #EDE2D6;
+  }
+  /* 這一行就是「字要大」的總開關。1rem = 這裡的值。 */
+  html { font-size: 22px; }
+  html.big { font-size: 27px; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+    font-size: 1rem;
+    line-height: 1.9;
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-size-adjust: 100%;
+  }
+  p, h1, h2, h3 { text-wrap: pretty; line-break: strict; overflow-wrap: break-word; }
+  main { max-width: 760px; margin: 0 auto; padding: 34px 26px 190px; }
+
+  /* ── 頁首 ── */
+  .top { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .mark { display: flex; align-items: center; gap: 12px; }
+  .mark b { font-size: .86rem; font-weight: 700; letter-spacing: 2px; color: var(--ink-soft); }
+  #zoom {
+    font-family: inherit;
+    font-size: .82rem;
+    font-weight: 700;
+    color: var(--rust);
+    background: var(--card);
+    border: 2px solid var(--line);
+    border-radius: 999px;
+    padding: 10px 20px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  header { margin: 32px 0 46px; padding-bottom: 34px; border-bottom: 2px solid var(--line); }
+  header .for { font-size: .78rem; color: var(--rust); letter-spacing: 4px; margin-bottom: 14px; }
+  header h1 { font-size: 1.9rem; line-height: 1.45; margin: 0 0 18px; font-weight: 700; }
+  header .sub { font-size: 1rem; color: var(--ink-soft); line-height: 1.8; }
+  .why {
+    background: var(--peach);
+    border-radius: 18px;
+    padding: 24px 28px;
+    margin-top: 26px;
+    font-size: 1rem;
+    line-height: 1.85;
+  }
+  .why em { color: var(--rust); font-style: normal; font-weight: 700; }
+
+  /* ── 題目 ── */
+  .q {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 30px 28px 26px;
+    margin-bottom: 22px;
+    box-shadow: 0 2px 10px rgba(74,52,40,.05);
+  }
+  .q .tag {
+    display: inline-block;
+    background: var(--peach);
+    color: var(--rust);
+    font-size: .74rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    padding: 5px 18px;
+    border-radius: 999px;
+    margin-bottom: 14px;
+  }
+  .q h2 { font-size: 1.28rem; font-weight: 700; line-height: 1.55; margin: 0 0 6px; }
+  .q .hint { font-size: .86rem; color: var(--ink-soft); margin: 0 0 18px; }
+  .opts { display: flex; flex-direction: column; gap: 12px; }
+  .opt {
+    display: block;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+    font-size: 1.05rem;
+    font-weight: 500;
+    line-height: 1.6;
+    color: var(--ink);
+    background: var(--paper);
+    border: 2px solid var(--line);
+    border-radius: 14px;
+    padding: 18px 22px;
+    min-height: 68px;
+    cursor: pointer;
+    transition: background .12s, border-color .12s;
+  }
+  .opt:hover { border-color: var(--gold); }
+  .opt.on {
+    background: var(--rust);
+    border-color: var(--rust);
+    color: #fff;
+    font-weight: 700;
+  }
+  .q.done .tag { background: var(--rust); color: #fff; }
+
+  /* ── 收信 ── */
+  .mail {
+    background: var(--card);
+    border: 3px solid var(--gold);
+    border-radius: 20px;
+    padding: 32px 28px;
+    margin-top: 34px;
+  }
+  .mail h2 { font-size: 1.28rem; font-weight: 700; margin: 0 0 12px; line-height: 1.55; }
+  .mail p { font-size: .94rem; color: var(--ink-soft); margin: 0 0 20px; line-height: 1.8; }
+  .mail input {
+    width: 100%;
+    font-family: inherit;
+    font-size: 1.1rem;
+    color: var(--ink);
+    background: var(--paper);
+    border: 2px solid var(--line);
+    border-radius: 14px;
+    padding: 18px 20px;
+    min-height: 68px;
+  }
+  .mail input:focus { outline: none; border-color: var(--gold); }
+  #send {
+    width: 100%;
+    margin-top: 16px;
+    font-family: inherit;
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: #fff;
+    background: var(--rust);
+    border: none;
+    border-radius: 999px;
+    padding: 20px;
+    min-height: 72px;
+    cursor: pointer;
+  }
+  #send[disabled] { background: #C9BDB2; cursor: default; }
+  #err {
+    margin-top: 14px;
+    font-size: .94rem;
+    font-weight: 700;
+    color: var(--rust);
+    line-height: 1.7;
+  }
+  #err:empty { display: none; }
+  .fine { font-size: .78rem; color: var(--ink-soft); margin-top: 16px; line-height: 1.7; }
+
+  /* ── 送出後 ── */
+  .done-box { text-align: center; padding: 20px 0 10px; }
+  .done-box .big { font-size: 1.7rem; font-weight: 700; line-height: 1.5; margin-bottom: 20px; }
+  .done-box .nth {
+    display: inline-block;
+    background: var(--peach);
+    color: var(--rust);
+    font-size: 1.05rem;
+    font-weight: 700;
+    padding: 14px 30px;
+    border-radius: 999px;
+    margin-bottom: 26px;
+  }
+  .done-box p { font-size: 1rem; line-height: 1.85; margin: 0 0 16px; }
+  .go {
+    display: inline-block;
+    margin-top: 22px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #fff;
+    background: var(--green);
+    border-radius: 999px;
+    padding: 18px 34px;
+    text-decoration: none;
+  }
+
+  /* ── 底 ── */
+  footer {
+    margin-top: 56px;
+    padding-top: 32px;
+    border-top: 2px solid var(--line);
+    text-align: center;
+  }
+  footer .bone { font-size: 1rem; color: var(--rust); font-weight: 600; line-height: 1.85; }
+  footer a {
+    display: inline-block;
+    margin-top: 22px;
+    font-size: .94rem;
+    font-weight: 700;
+    color: var(--blue);
+  }
+  footer small { display: block; margin-top: 20px; font-size: .72rem; color: var(--ink-soft); letter-spacing: 2px; }
+
+  /* ── 底部進度（黏在畫面下緣，永遠看得到還剩幾題）── */
+  .bar {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    background: rgba(253,248,243,.96);
+    border-top: 2px solid var(--line);
+    padding: 16px 26px;
+    text-align: center;
+    font-size: .94rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    backdrop-filter: blur(6px);
+  }
+  .bar i { font-style: normal; color: var(--rust); }
+  .bar u { display: block; text-decoration: none; font-size: .78rem; font-weight: 400; color: var(--ink-soft); letter-spacing: 1px; margin-top: 2px; }
+  .bar u:empty { display: none; }
+
+  @media (max-width: 700px) {
+    html { font-size: 20px; }
+    html.big { font-size: 25px; }
+    main { padding: 24px 18px 180px; }
+    header h1 { font-size: 1.62rem; }
+    .q, .mail { padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+<main>
+
+  <div class="top">
+    <div class="mark">
+      <!-- 品牌標記：跟 quiz.atpifit.com 同一顆，四個點＝A／T／P／I -->
+      <svg width="62" height="46" viewBox="-52 -30 104 72" aria-hidden="true">
+        <g fill="none" stroke="#4A3428" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M-36 -22 L36 -22 Q48 -22 48 -10"/>
+          <path d="M48 -10 L48 10 Q48 22 36 22"/>
+          <path d="M36 22 L-6 22 L-16 36 L-22 22 L-36 22 Q-48 22 -48 10"/>
+          <path d="M-48 10 L-48 -10 Q-48 -22 -36 -22"/>
+        </g>
+        <circle cx="-21" cy="0" r="5" fill="#C6603A"/>
+        <circle cx="-7" cy="0" r="5" fill="#6E8B77"/>
+        <circle cx="7" cy="0" r="5" fill="#6E8CA8"/>
+        <circle cx="21" cy="0" r="5" fill="#C99A4E"/>
+      </svg>
+      <b>光頭 × 影響力健身房</b>
+    </div>
+    <button id="zoom" type="button">放大字</button>
+  </div>
+
+  <header>
+    <div class="for">短影音 0 上手培訓・課前調查</div>
+    <h1>上課前，先讓我知道你在哪裡</h1>
+    <div class="sub">五題，選一選就好。不用登入、不會公開、大概 30 秒。</div>
+    <div class="why">
+      我想照你們<em>現在的程度</em>備課，不想講一堂你們用不上的課。<br>
+      所以請照實選——<em>「完全不會」才是最有用的答案</em>。
+    </div>
+  </header>
+
+  <div id="qs"></div>
+
+  <div class="mail" id="mail">
+    <h2>最後留一個 email 就好</h2>
+    <p>課後的補充資料會寄這個信箱。<br>
+       平時我也會寄一些「怎麼把話講進別人心裡」的東西過去，不想收隨時退訂。</p>
+    <input id="email" type="email" inputmode="email" autocomplete="email"
+           placeholder="你的 email" aria-label="你的 email">
+    <button id="send" type="button">送出</button>
+    <div id="err" role="alert"></div>
+    <div class="fine">只用來寄這門課的資料，不會給別人、不會拿去打廣告。</div>
+  </div>
+
+  <div class="done-box" id="done" hidden>
+    <div class="big">收到了，謝謝你。</div>
+    <div class="nth" id="nth"></div>
+    <p>我會照大家的答案調整課程內容，<br>把時間花在多數人卡住的那一塊。</p>
+    <p><b>9/27（日）晚上 8:00，線上見。</b></p>
+    <a class="go" href="https://atpifit.com/" target="_blank" rel="noopener">▸ 順便看看我平常在做什麼</a>
+  </div>
+
+  <footer>
+    <div class="bone">
+      不用擔心自己什麼都不會。<br>
+      這堂課，本來就是為「還不會」的人開的。
+    </div>
+    <a href="https://atpifit.com/" target="_blank" rel="noopener">影響力健身房 ATPIFit 官網 · atpifit.com</a>
+    <small>課前調查 · 2026-09</small>
+  </footer>
+
+</main>
+
+<div class="bar" id="bar">已答 <i><span id="n">0</span> / 5</i><u id="tally"></u></div>
+
+<script>
+/* 🔴 部署 apps-script.gs 之後，把 /exec 網址貼進這裡。空的話送不出去。
+   這支只管「五題答案＋累計人數」，是備課用的。 */
+var SHEET_API = "https://script.google.com/macros/s/AKfycbxbBsqq8hie4u-HtaguYcfz5gizqMhf1cYIk2ROi4ERPE9mWEn8Chr9uUKrzLgFf8gBww/exec";
+
+/* 養課走官網那條既有的路，不另開一條：官網 Newsletter 表單用的同一個 /exec、
+   同一個 action=subscribe，寫進「(漏斗)電子報訂閱」再打 LaunChill Workflow②（歡迎信）。
+   所以這頁不需要新的 workflow、不需要新寫養課信。source=videoquiz 用來事後分辨名單來源。
+   失敗只寫 console：養課寄不出去不可以害備課資料收不到（低摩擦守則）。 */
+var NEWSLETTER_API = "https://script.google.com/macros/s/AKfycbz7VxeV8ZmjSiGNO-G3ZwRLPg-H1H2NjXHy6brCU5yVaVoYOXB-LItU750j81Q3eno/exec";
+
+/* 題目真相在 productkit/10-直銷團隊-天麗專案/短影音/04-課前調查.md。
+   選項一律三個、一律講**做得到什麼**不講程度形容詞——
+   「初級／中級／高級」要受測者先自評再翻譯成等級，多一層猜測就多一層噪音。 */
+var QS = [
+  { k:"q1", tag:"腳本", q:"你知道怎麼寫出一支「會有人看」的腳本嗎？",
+    hint:"就是開頭幾句要說什麼、順序怎麼排。",
+    a:["完全沒概念", "大概知道，但自己寫不出來", "可以自己寫出來"] },
+  { k:"q2", tag:"拍攝", q:"你可以對著鏡頭，把一段話講完嗎？",
+    hint:"不用講得好，講完就算。",
+    a:["會卡住，講不下去", "講得出來，但要重錄很多次", "一兩次就過"] },
+  { k:"q3", tag:"剪輯", q:"你會用剪輯軟體嗎？",
+    hint:"像是「開拍」、「剪映」這一類的 App。",
+    a:["沒裝過", "裝了，會一點點", "可以自己剪完發出去"] },
+  { k:"q4", tag:"現況", q:"到目前為止，你發過幾支短影音？",
+    hint:"公開發出去的才算。",
+    a:["0 支", "1 到 3 支", "4 支以上"] },
+  { k:"q5", tag:"最想解決", q:"這三個裡面，你最想先解決哪一個？",
+    hint:"選一個最讓你卡住的。",
+    a:["腳本寫不出來", "不敢對鏡頭", "剪輯不會用"] }
+];
+
+var ans = {}, sent = false;
+
+/* 字級開關：只動 html 的 font-size，整頁 rem 一起變。記在 localStorage，回訪不用再按。 */
+var zoom = document.getElementById("zoom");
+function setBig(on){
+  document.documentElement.classList.toggle("big", on);
+  zoom.textContent = on ? "字變小" : "放大字";
+  try { localStorage.setItem("videoquiz_big", on ? "1" : "0"); } catch(e){}
+}
+zoom.onclick = function(){ setBig(!document.documentElement.classList.contains("big")); };
+try { if (localStorage.getItem("videoquiz_big") === "1") setBig(true); } catch(e){}
+
+/* 題目用 JS 長出來：五題長得一樣，手刻五遍只會讓改一個字要改五個地方。 */
+var box = document.getElementById("qs");
+QS.forEach(function(item, i){
+  var sec = document.createElement("section");
+  sec.className = "q";
+  sec.id = "q-" + item.k;
+  var opts = item.a.map(function(t){
+    return '<button class="opt" type="button" data-v="' + t + '">' + t + '</button>';
+  }).join("");
+  sec.innerHTML = '<span class="tag">' + (i + 1) + ' · ' + item.tag + '</span>'
+                + '<h2>' + item.q + '</h2>'
+                + '<p class="hint">' + item.hint + '</p>'
+                + '<div class="opts">' + opts + '</div>';
+  sec.addEventListener("click", function(ev){
+    var b = ev.target.closest(".opt");
+    if (!b) return;
+    sec.querySelectorAll(".opt").forEach(function(x){ x.classList.remove("on"); });
+    b.classList.add("on");
+    sec.classList.add("done");
+    ans[item.k] = b.dataset.v;
+    document.getElementById("n").textContent = Object.keys(ans).length;
+    document.getElementById("err").textContent = "";
+    // 答完就把下一題推到眼前——這群人最容易漏的是「下面還有」
+    var next = sec.nextElementSibling || document.getElementById("mail");
+    if (next) next.scrollIntoView({ behavior:"smooth", block:"center" });
+  });
+  box.appendChild(sec);
+});
+
+var err = document.getElementById("err"), btn = document.getElementById("send");
+
+btn.onclick = function(){
+  if (sent) return;
+  var miss = QS.filter(function(x){ return !ans[x.k]; });
+  if (miss.length){
+    err.textContent = "還有 " + miss.length + " 題沒選。";
+    document.getElementById("q-" + miss[0].k).scrollIntoView({ behavior:"smooth", block:"center" });
+    return;
+  }
+  var em = document.getElementById("email").value.trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)){
+    err.textContent = "email 看起來不太對，再檢查一下。";
+    return;
+  }
+  if (!SHEET_API){
+    err.textContent = "表單還沒接上，請聯絡光頭。";
+    return;
+  }
+  err.textContent = "";
+  btn.disabled = true;
+  btn.textContent = "送出中...";
+  var body = { email: em };
+  QS.forEach(function(x){ body[x.k] = ans[x.k]; });
+
+  /* 順手丟進官網的訂閱名單（＝養課流程的入口）。不 await、不擋主流程。 */
+  fetch(NEWSLETTER_API, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify({ action:"subscribe", email:em, name:"", source:"videoquiz", page:"/videoquiz/" })
+  }).catch(function(e){ console.warn("訂閱沒進去：", e); });
+
+  // text/plain 是為了不觸發 CORS preflight——Apps Script 不回 preflight，送 json 會被擋
+  fetch(SHEET_API, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify(body)
+  }).then(function(r){ return r.json(); }).then(function(d){
+    if (d.status !== "ok") throw new Error(d.message || "bad status");
+    sent = true;
+    document.getElementById("mail").hidden = true;
+    box.hidden = true;
+    document.getElementById("bar").hidden = true;
+    var done = document.getElementById("done");
+    done.hidden = false;
+    document.getElementById("nth").textContent = "你是第 " + d.count + " 位填完的夥伴";
+    done.scrollIntoView({ behavior:"smooth", block:"center" });
+  }).catch(function(e){
+    btn.disabled = false;
+    btn.textContent = "送出";
+    err.textContent = "送出失敗，網路可能斷了。再按一次試試。";
+    console.warn(e);
+  });
+};
+
+/* 累計人數走 JSONP 不走 fetch：Apps Script 的 GET 會轉址到 googleusercontent，
+   跨網域讀回來的行為不穩。JSONP 是 <script> 標籤，沒有跨域問題，失敗就靜靜不顯示。 */
+window.__tally = function(d){
+  if (d && d.status === "ok" && d.count > 0){
+    document.getElementById("tally").textContent = "目前 " + d.count + " 位夥伴填完了";
+  }
+};
+if (SHEET_API){
+  var s = document.createElement("script");
+  s.src = SHEET_API + "?callback=__tally";
+  s.onerror = function(){};
+  document.head.appendChild(s);
+}
+</script>
+</body>
+</html>
