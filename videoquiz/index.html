@@ -7,9 +7,11 @@
      右上角那顆「放大字」就是在改它。**不要把字級寫回 px**，寫回去那顆鈕就失效。
   🔴 頁面刻意不提天麗、不提收入。公開頁掛品牌名要對方同意，講收入碰直銷法規；
      這頁只需要知道「你會不會」，兩個都不必要。
-  🔴 收 email 要能用，得先部署 apps-script.gs 並把網址貼進下面的 SHEET_API。
-     送出時打兩支：SHEET_API（五題答案＋人數・備課用）＋ NEWSLETTER_API（官網既有的
+  🔴 收資料要能用，得先部署 apps-script.gs 並把網址貼進下面的 SHEET_API。
+     送出時打兩支：SHEET_API（姓名＋五題答案＋人數・備課用）＋ NEWSLETTER_API（官網既有的
      action=subscribe・養課用）。養課那條刻意重用官網的路，不另開 workflow。
+  🔴 姓名必填、email 選填——這群人不少沒有 email，硬性要求等於把他們擋在門外。
+     這頁的目的是備課，名單是副產品；**不要為了多收幾個 email 把 email 改回必填**。
 -->
 <html lang="zh-Hant">
 <head>
@@ -148,6 +150,17 @@
     min-height: 68px;
   }
   .mail input:focus { outline: none; border-color: var(--gold); }
+  /* email 區塊＝配角：淡桃面、無描邊，明度上沉下去（跟必填的姓名分層）。
+     用面的明度退場，不是把字縮小——字縮小這群人就看不到了。 */
+  .opt {
+    margin-top: 22px;
+    background: var(--peach);
+    border-radius: 16px;
+    padding: 20px 20px 22px;
+  }
+  .opt label { display: block; font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+  .opt p { font-size: .88rem; margin: 0 0 14px; }
+  .opt p b { color: var(--rust); }
   #send {
     width: 100%;
     margin-top: 16px;
@@ -287,19 +300,30 @@
 
   <div id="qs"></div>
 
+  <!-- 姓名必填、email 選填。這群人不少沒有 email，硬性要求等於把他們擋在門外，
+       而這頁的目的是備課不是抓名單——名單是副產品，不可以反過來吃掉主要目的。
+       所以 email 用「留了會多收到什麼」去鉤，不用驗證擋人。 -->
   <div class="mail" id="mail">
-    <h2>最後留一個 email 就好</h2>
-    <p>課後的補充資料會寄這個信箱。<br>
-       平時我也會寄一些「怎麼把話講進別人心裡」的東西過去，不想收隨時退訂。</p>
-    <input id="email" type="email" inputmode="email" autocomplete="email"
-           placeholder="你的 email" aria-label="你的 email">
+    <h2>最後留個稱呼就好</h2>
+    <p>我想知道是誰填的，上課才對得起來。</p>
+    <input id="name" type="text" autocomplete="name"
+           placeholder="你的名字或line暱稱" aria-label="你的名字或line暱稱">
+
+    <div class="opt">
+      <label for="email">email（沒有就空著，不影響上課）</label>
+      <p>留了的話，課後的<b>補充資料</b>會寄給你一份——課堂上來不及講完的都在裡面。
+         沒有 email 也完全沒關係，當天來就好。</p>
+      <input id="email" type="email" inputmode="email" autocomplete="email"
+             placeholder="你的 email（可留白）" aria-label="你的 email，可留白">
+    </div>
+
     <button id="send" type="button">送出</button>
     <div id="err" role="alert"></div>
     <div class="fine">只用來寄這門課的資料，不會給別人、不會拿去打廣告。</div>
   </div>
 
   <div class="done-box" id="done" hidden>
-    <div class="big">收到了，謝謝你。</div>
+    <div class="big" id="thx">收到了，謝謝你。</div>
     <div class="nth" id="nth"></div>
     <p>我會照大家的答案調整課程內容，<br>把時間花在多數人卡住的那一塊。</p>
     <p><b>9/27（日）晚上 8:00，線上見。</b></p>
@@ -409,27 +433,39 @@ btn.onclick = function(){
     document.getElementById("q-" + miss[0].k).scrollIntoView({ behavior:"smooth", block:"center" });
     return;
   }
+  var nm = document.getElementById("name").value.trim();
+  if (!nm){
+    err.textContent = "還沒留名字，我不知道是誰填的。";
+    document.getElementById("name").focus();
+    return;
+  }
+  /* email 選填：空的就直接放行。有填才驗，而且只擋明顯打錯的，
+     不用嚴格規則——把想留的人擋在外面比收到一個怪字串糟糕得多。 */
   var em = document.getElementById("email").value.trim();
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)){
-    err.textContent = "email 看起來不太對，再檢查一下。";
+  if (em && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)){
+    err.textContent = "email 看起來不太對，再檢查一下；不想留的話清空就好。";
     return;
   }
   if (!SHEET_API){
-    err.textContent = "表單還沒接上，請聯絡光頭。";
+    err.textContent = "表單還沒接上，請聯絡平凡人光頭。";
     return;
   }
   err.textContent = "";
   btn.disabled = true;
   btn.textContent = "送出中...";
-  var body = { email: em };
+  var body = { name: nm, email: em };
   QS.forEach(function(x){ body[x.k] = ans[x.k]; });
 
-  /* 順手丟進官網的訂閱名單（＝養課流程的入口）。不 await、不擋主流程。 */
-  fetch(NEWSLETTER_API, {
-    method: "POST",
-    headers: { "Content-Type": "text/plain;charset=utf-8" },
-    body: JSON.stringify({ action:"subscribe", email:em, name:"", source:"videoquiz", page:"/videoquiz/" })
-  }).catch(function(e){ console.warn("訂閱沒進去：", e); });
+  /* 順手丟進官網的訂閱名單（＝養課流程的入口）。不 await、不擋主流程。
+     沒留 email 就不打——訂閱那支要 email，空的送過去只會在後台堆錯誤。
+     現在有姓名了，first_name 帶得過去，Workflow② 的稱呼變數不再是空的。 */
+  if (em) {
+    fetch(NEWSLETTER_API, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ action:"subscribe", email:em, name:nm, source:"videoquiz", page:"/videoquiz/" })
+    }).catch(function(e){ console.warn("訂閱沒進去：", e); });
+  }
 
   // text/plain 是為了不觸發 CORS preflight——Apps Script 不回 preflight，送 json 會被擋
   fetch(SHEET_API, {
@@ -445,6 +481,8 @@ btn.onclick = function(){
     document.getElementById("head").hidden = true;
     var done = document.getElementById("done");
     done.hidden = false;
+    // textContent 不是 innerHTML——名字是使用者輸入的，用 innerHTML 就是一個 XSS 缺口
+    document.getElementById("thx").textContent = nm + "，收到了，謝謝你。";
     document.getElementById("nth").textContent = "你是第 " + d.count + " 位填完的夥伴";
     // 標頭收掉後整頁變短，捲到最上面比 block:"center" 好看（center 會把內容往下推）
     window.scrollTo({ top: 0, behavior: "smooth" });

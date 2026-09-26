@@ -1,5 +1,5 @@
 /**
- * 短影音課・課前調查的後端。收 email＋五題答案，回傳累計人數。
+ * 短影音課・課前調查的後端。收姓名（必填）＋email（選填）＋五題答案，回傳累計人數。
  *
  * ── 部署（做一次，五分鐘）────────────────────────────────
  * 1. 開一份新的 Google 試算表（名字隨便，例如「短影音課前調查」）。
@@ -15,7 +15,8 @@
  */
 
 var SHEET = '課前調查';
-var HEAD = ['時間', 'email', '腳本', '拍攝', '剪輯', '已發幾支', '最想解決'];
+// 姓名必填、email 選填（這群人不少沒有 email）。姓名排在 email 前面＝老師讀表時先看到人。
+var HEAD = ['時間', '姓名', 'email', '腳本', '拍攝', '剪輯', '已發幾支', '最想解決'];
 
 function sheet_() {
   var ss = SpreadsheetApp.getActive();
@@ -23,6 +24,10 @@ function sheet_() {
   if (!sh) {
     sh = ss.insertSheet(SHEET);
     sh.appendRow(HEAD);
+    sh.setFrozenRows(1);
+  } else if (sh.getLastColumn() < HEAD.length) {
+    // 加欄後重新部署時把標題列補齊，不然新欄位是空白表頭、看表的人不知道那是什麼
+    sh.getRange(1, 1, 1, HEAD.length).setValues([HEAD]);
     sh.setFrozenRows(1);
   }
   return sh;
@@ -43,15 +48,26 @@ function doPost(e) {
   lock.waitLock(20000);
   try {
     var d = JSON.parse(e.postData.contents);
-    var row = [new Date(), d.email || '', d.q1 || '', d.q2 || '', d.q3 || '', d.q4 || '', d.q5 || ''];
+    var name = String(d.name || '').trim();
+    var mail = String(d.email || '').trim();
+    var row = [new Date(), name, mail, d.q1 || '', d.q2 || '', d.q3 || '', d.q4 || '', d.q5 || ''];
     var sh = sheet_();
-    // 同一個 email 重填就改掉原本那列，不新增——不然人數會被重複填答灌水
-    var mails = sh.getLastRow() > 1
-      ? sh.getRange(2, 2, sh.getLastRow() - 1, 1).getValues().map(function (r) {
-          return String(r[0]).trim().toLowerCase();
-        })
-      : [];
-    var at = mails.indexOf(String(d.email || '').trim().toLowerCase());
+
+    /* 同一個人重填就改掉原本那列，不新增——不然人數會被重複填答灌水。
+       認人的鑰匙：有 email 就用 email（唯一），沒有就退回姓名。
+       ⚠️ 退回姓名時，兩個同名的人會蓋掉彼此。三十人的班同名機率低，
+       而為了防這個去要求每個人都有 email，等於把沒信箱的人擋在門外——
+       那才是真正的損失。寧可事後手動拆，不要事前擋人。 */
+    var key = (mail || name).toLowerCase();
+    var col = mail ? 3 : 2;
+    var at = -1;
+    if (key && sh.getLastRow() > 1) {
+      var vals = sh.getRange(2, col, sh.getLastRow() - 1, 1).getValues();
+      for (var i = 0; i < vals.length; i++) {
+        var v = String(vals[i][0]).trim().toLowerCase();
+        if (v && v === key) { at = i; break; }
+      }
+    }
     if (at >= 0) {
       sh.getRange(at + 2, 1, 1, row.length).setValues([row]);
     } else {
