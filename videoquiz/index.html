@@ -273,7 +273,9 @@
     <button id="zoom" type="button">放大字</button>
   </div>
 
-  <header>
+  <!-- 答完就整塊收掉（見下方送出成功的 handler）：標頭是「請你作答」的話，
+       題目都沒了還留著只會跟感謝訊息互相打架。 -->
+  <header id="head">
     <div class="for">短影音０上手培訓・課前調查</div>
     <h1>上課前，先讓我知道你在哪裡</h1>
     <div class="sub">五題，選一選就好。不用登入、不會公開、大概 30 秒。</div>
@@ -440,10 +442,12 @@ btn.onclick = function(){
     document.getElementById("mail").hidden = true;
     box.hidden = true;
     document.getElementById("bar").hidden = true;
+    document.getElementById("head").hidden = true;
     var done = document.getElementById("done");
     done.hidden = false;
     document.getElementById("nth").textContent = "你是第 " + d.count + " 位填完的夥伴";
-    done.scrollIntoView({ behavior:"smooth", block:"center" });
+    // 標頭收掉後整頁變短，捲到最上面比 block:"center" 好看（center 會把內容往下推）
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }).catch(function(e){
     btn.disabled = false;
     btn.textContent = "送出";
