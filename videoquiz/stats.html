@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<!--
+  短影音課前調查・答題分佈統計。
+  路徑：https://lp.atpifit.com/videoquiz/stats.html（無密碼，老師 2026-09-27 定）
+  真相：productkit/10-直銷團隊-天麗專案/短影音/04-課前調查.md §7
+
+  🔴 這頁公開、沒有金鑰，所以它**只拿得到彙總計數**：幾人答題、每題各選項各幾人。
+     姓名與 email 拿不到——不是這頁沒去要，是 apps-script.gs 的 stats_() 用 getRange
+     只框答案欄（第 4–8 欄），名單那兩欄根本不進記憶體。要加人名對照就是另一支端點、
+     那支才要金鑰，**不要把名單塞回 stats**。
+  🔴 檔名叫 stats 不叫 admin：這頁沒有任何權限控制，叫 admin 會讓後來的人誤以為它受保護。
+-->
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>課前調查・答題分佈</title>
+<style>
+  :root {
+    --paper: #FDF8F3;
+    --card: #FFFFFF;
+    --peach: #FDF0E6;
+    --ink: #4A3428;
+    --ink-soft: #857A70;
+    --rust: #C1553A;
+    --gold: #D4A34A;
+    --green: #6B8A72;
+    --blue: #5B7A99;
+    --line: #EDE2D6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  main { max-width: 960px; margin: 0 auto; padding: 28px 22px 60px; }
+
+  header { margin-bottom: 28px; padding-bottom: 22px; border-bottom: 2px solid var(--line); }
+  header .kicker { font-size: 12px; color: var(--rust); letter-spacing: 4px; margin-bottom: 6px; }
+  header h1 { font-size: 26px; font-weight: 700; margin: 0 0 12px; }
+  .meta { display: flex; flex-wrap: wrap; gap: 16px 24px; align-items: baseline; font-size: 14px; color: var(--ink-soft); }
+  .meta b { color: var(--rust); font-size: 22px; font-weight: 700; }
+  .meta .stamp { font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 12px; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
+  .qcard {
+    background: var(--card);
+    border-radius: 18px;
+    padding: 22px 22px 20px;
+    box-shadow: 0 2px 10px rgba(74,52,40,.05);
+  }
+  .qcard .tag {
+    display: inline-block;
+    background: var(--peach);
+    color: var(--rust);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    padding: 4px 14px;
+    border-radius: 999px;
+    margin-bottom: 10px;
+  }
+  .qcard h2 { font-size: 15px; font-weight: 600; line-height: 1.55; margin: 0 0 14px; }
+  .pie-wrap { display: flex; align-items: center; gap: 18px; }
+  .pie { width: 128px; height: 128px; flex-shrink: 0; }
+  .pie .empty {
+    fill: none;
+    stroke: var(--line);
+    stroke-width: 2;
+  }
+  .pie text {
+    font-family: inherit;
+    font-size: 12px;
+    fill: var(--ink-soft);
+    text-anchor: middle;
+    dominant-baseline: middle;
+  }
+  .legend { flex: 1; font-size: 13px; line-height: 1.55; }
+  .legend li {
+    list-style: none;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 5px 0;
+    border-bottom: 1px dashed var(--line);
+  }
+  .legend li:last-child { border-bottom: 0; }
+  .legend .sw {
+    display: inline-block;
+    width: 10px; height: 10px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    transform: translateY(1px);
+  }
+  .legend .txt { flex: 1; color: var(--ink); }
+  .legend .n { font-weight: 700; color: var(--ink); }
+  .legend .pct { color: var(--ink-soft); font-size: 12px; margin-left: 6px; }
+
+  .other {
+    margin-top: 10px;
+    font-size: 11px;
+    color: var(--ink-soft);
+  }
+  .other:empty { display: none; }
+
+  #msg {
+    background: var(--peach);
+    border: 2px solid var(--gold);
+    border-radius: 14px;
+    padding: 18px 22px;
+    color: var(--ink);
+    font-size: 14px;
+    line-height: 1.75;
+    margin-bottom: 22px;
+  }
+  #msg:empty { display: none; }
+  #msg code {
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    background: rgba(255,255,255,.7);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+
+  .toolbar { display: flex; gap: 10px; align-items: center; margin-left: auto; }
+  .toolbar button {
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--rust);
+    background: var(--card);
+    border: 2px solid var(--line);
+    border-radius: 999px;
+    padding: 6px 14px;
+    cursor: pointer;
+  }
+  .toolbar button:hover { border-color: var(--gold); }
+  .toolbar label {
+    font-size: 12px;
+    color: var(--ink-soft);
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  footer {
+    margin-top: 40px;
+    padding-top: 22px;
+    border-top: 1px solid var(--line);
+    text-align: center;
+    font-size: 11px;
+    color: var(--ink-soft);
+    letter-spacing: 1px;
+  }
+</style>
+</head>
+<body>
+<main>
+
+  <header>
+    <div class="kicker">短影音課前調查・答題分佈</div>
+    <h1>五題即時分佈</h1>
+    <div class="meta">
+      <span>累計答題：<b id="total">—</b> 人</span>
+      <span>更新時間：<span class="stamp" id="stamp">—</span></span>
+      <span class="toolbar">
+        <label><input type="checkbox" id="autorefresh" checked> 每 10 秒重整</label>
+        <button id="refresh" type="button">立即重整</button>
+      </span>
+    </div>
+  </header>
+
+  <div id="msg"></div>
+
+  <section class="grid" id="grid"></section>
+
+  <footer>
+    productkit 04-課前調查.md §7　·　資料源：videoquiz apps-script.gs<br>
+    只顯示答題分佈，不含姓名與 email
+  </footer>
+</main>
+
+<script>
+/* 端點跟 index.html 用同一支——加了 stats 分支之後兩邊共用。 */
+var SHEET_API = "https://script.google.com/macros/s/AKfycbxbBsqq8hie4u-HtaguYcfz5gizqMhf1cYIk2ROi4ERPE9mWEn8Chr9uUKrzLgFf8gBww/exec";
+
+/* 三選項的色盤——固定順序：橘（第一選項＝最弱／完全不會，是老師最常看的一格）
+   → 金（中間）→ 綠（第三選項＝最強／已在做的人）。跨題保持一致，眼睛認得色階＝認得程度。 */
+var PIE_COLORS = ["#C1553A", "#D4A34A", "#6B8A72"];
+var OTHER_COLOR = "#B0A398";
+
+var msg = document.getElementById('msg');
+var grid = document.getElementById('grid');
+var totalEl = document.getElementById('total');
+var stampEl = document.getElementById('stamp');
+var refreshBtn = document.getElementById('refresh');
+var autoBox = document.getElementById('autorefresh');
+
+function setMsg(html) { msg.innerHTML = html || ''; }
+
+/* 圓餅：SVG 圓形＋stroke-dasharray 一段一段畫。用 dasharray 而不是 path arc，
+   是為了每個切片獨立換色時不必算 arc 命令；同時 stroke 動畫比 fill 好看。 */
+function pieSVG(counts, opts, total) {
+  var C = 2 * Math.PI * 42;  // 半徑 42 的周長
+  var offset = 0;
+  var slices = '';
+  var colored = 0;
+  for (var i = 0; i < opts.length; i++) {
+    var n = counts[opts[i]] || 0;
+    if (n > 0 && total > 0) {
+      var frac = n / total;
+      var len = frac * C;
+      slices += '<circle r="42" cx="64" cy="64" fill="transparent"'
+             + ' stroke="' + PIE_COLORS[i] + '"'
+             + ' stroke-width="22"'
+             + ' stroke-dasharray="' + len.toFixed(2) + ' ' + (C - len).toFixed(2) + '"'
+             + ' stroke-dashoffset="' + (-offset).toFixed(2) + '"'
+             + ' transform="rotate(-90 64 64)"/>';
+      offset += len;
+      colored += n;
+    }
+  }
+  var other = (total || 0) - colored;
+  if (other > 0) {
+    var len2 = (other / total) * C;
+    slices += '<circle r="42" cx="64" cy="64" fill="transparent"'
+           + ' stroke="' + OTHER_COLOR + '"'
+           + ' stroke-width="22"'
+           + ' stroke-dasharray="' + len2.toFixed(2) + ' ' + (C - len2).toFixed(2) + '"'
+           + ' stroke-dashoffset="' + (-offset).toFixed(2) + '"'
+           + ' transform="rotate(-90 64 64)"/>';
+  }
+  if (total === 0) {
+    slices = '<circle r="42" cx="64" cy="64" class="empty"/>'
+           + '<text x="64" y="64">尚無</text>';
+  }
+  return '<svg class="pie" viewBox="0 0 128 128" aria-hidden="true">' + slices + '</svg>';
+}
+
+/* 一張卡：pie + 圖例。圖例的百分比是切片自己的計算，加起來會四捨五入到 100
+   附近但不強求為 100——比硬把最後一格湊成 100 誠實。 */
+function cardHTML(q) {
+  var total = q.opts.reduce(function (s, o) { return s + (q.counts[o] || 0); }, 0);
+  var otherN = q.counts.__other || 0;
+  var totalIncOther = total + otherN;
+  var pie = pieSVG(q.counts, q.opts, totalIncOther);
+  var legend = q.opts.map(function (o, i) {
+    var n = q.counts[o] || 0;
+    var pct = totalIncOther > 0 ? Math.round((n / totalIncOther) * 100) : 0;
+    return '<li>'
+      + '<span class="sw" style="background:' + PIE_COLORS[i] + '"></span>'
+      + '<span class="txt">' + escapeHtml(o) + '</span>'
+      + '<span class="n">' + n + '</span>'
+      + '<span class="pct">' + pct + '%</span>'
+      + '</li>';
+  }).join('');
+  var otherLine = otherN > 0
+    ? '<div class="other">＋' + otherN + ' 筆未對到現行選項（改題但沒重新部署／舊資料）</div>'
+    : '';
+  return '<article class="qcard">'
+    + '<span class="tag">' + escapeHtml(q.tag) + '</span>'
+    + '<h2>' + escapeHtml(q.q) + '</h2>'
+    + '<div class="pie-wrap">' + pie + '<ul class="legend">' + legend + '</ul></div>'
+    + otherLine
+    + '</article>';
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, function (c) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+  });
+}
+
+/* JSONP：跟 index.html 底部的 __tally 同一條路。理由見那邊註解——Apps Script GET
+   會轉址到 googleusercontent，跨網域 fetch 讀回來不穩，<script> 標籤沒這個問題。
+   每次重整換一個 callback 名（帶時間戳），避免瀏覽器把回應快取住。 */
+function fetchStats() {
+  if (!SHEET_API) {
+    setMsg('SHEET_API 還沒設。');
+    return;
+  }
+  var cbName = '__stats_' + Date.now();
+  window[cbName] = function (d) {
+    delete window[cbName];
+    handleStats(d);
+    var s = document.getElementById(cbName + '_s');
+    if (s && s.parentNode) s.parentNode.removeChild(s);
+  };
+  var s = document.createElement('script');
+  s.id = cbName + '_s';
+  s.src = SHEET_API + '?action=stats&callback=' + cbName;
+  s.onerror = function () {
+    setMsg('連不上後端。網路可能斷了，或 Apps Script 沒部署成新版。');
+    delete window[cbName];
+  };
+  document.head.appendChild(s);
+}
+
+function handleStats(d) {
+  if (!d || d.status !== 'ok') {
+    setMsg('後端回錯：' + escapeHtml((d && d.message) || '未知')
+         + '。若是剛改完 apps-script.gs，確認有「部署 → 管理部署作業 → 版本選新版本」。');
+    return;
+  }
+  setMsg('');
+  totalEl.textContent = d.total;
+  var t = new Date(d.updatedAt || Date.now());
+  var hh = String(t.getHours()).padStart(2, '0');
+  var mm = String(t.getMinutes()).padStart(2, '0');
+  var ss = String(t.getSeconds()).padStart(2, '0');
+  stampEl.textContent = hh + ':' + mm + ':' + ss;
+  grid.innerHTML = (d.q || []).map(cardHTML).join('');
+}
+
+refreshBtn.onclick = fetchStats;
+
+/* 自動重整：10 秒。太短會頻繁打 Apps Script（有配額）、太長變成不是「即時」。
+   分頁在背景時 setInterval 會被 throttle，這對我們是好事——沒人看就不用打。 */
+var timer = null;
+function setAuto(on) {
+  if (timer) { clearInterval(timer); timer = null; }
+  if (on) timer = setInterval(fetchStats, 10000);
+}
+autoBox.onchange = function () { setAuto(autoBox.checked); };
+setAuto(true);
+
+fetchStats();
+</script>
+</body>
+</html>
