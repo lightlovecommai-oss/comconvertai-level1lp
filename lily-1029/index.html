@@ -141,6 +141,31 @@
   /* h2 底下的一句引言 */
   .lead { margin: -.4rem 0 .7rem; font-size: .85rem; color: var(--ink-soft); }
 
+  .poster {
+    display: block; width: 100%; height: auto;
+    border-radius: 1rem; margin: 0 0 1.2rem;
+    box-shadow: 0 .4rem 1.4rem rgba(74, 52, 40, .13);
+  }
+
+  /* ── 老師群卡在哪 ─────────────────────────────── */
+  .pain { display: grid; gap: .55rem; }
+  .pain > div {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: .9rem; padding: .8rem 1rem;
+  }
+  .pain .tag {
+    display: inline-block; background: var(--blush); color: var(--rose);
+    font-size: .7rem; font-weight: 700; border-radius: 1rem;
+    padding: .1rem .6rem; margin-bottom: .35rem;
+  }
+  .pain h3 { margin: 0; font-size: 1rem; color: var(--ink); }
+  .pain p { margin: .25rem 0 0; font-size: .85rem; color: var(--ink-soft); }
+  .verdict {
+    margin-top: .7rem; background: var(--blush); border-radius: .9rem;
+    padding: .9rem 1rem; text-align: center; font-size: .92rem; line-height: 1.8;
+  }
+  .verdict em { font-style: normal; font-weight: 700; color: var(--rose); }
+
   /* ── 當天怎麼走 ───────────────────────────────── */
   .run { list-style: none; padding: 0; margin: 0; }
   .run li {
@@ -149,7 +174,7 @@
   }
   .run li:last-child { border-bottom: 0; }
   .run u {
-    flex: none; width: 4.2rem; text-decoration: none;
+    flex: none; width: 5.5rem; text-decoration: none;   /* 容得下「95 – 120 分」不折行 */
     color: var(--rose); font-weight: 700; font-size: .8rem; padding-top: .15rem;
   }
   .run b { display: block; font-size: .95rem; }
@@ -282,6 +307,12 @@
     <div class="band">讓感動　變成行動</div>
   </section>
 
+  <!-- 海報放在最上面：老師群是在 Lily 那裡先看到這張圖才點進來的，
+       第一眼對得上，才知道自己沒走錯地方。
+       width/height 照原圖 1024×1536 寫死＝載入時就佔好位子，圖進來不會把下面的字推走。 -->
+  <img class="poster" src="poster-1029.jpg" width="1024" height="1536"
+       alt="30 分鐘講出影響力・沙龍會講師銷講實戰訓練｜10/29（四）14:00–16:00・宸羽舞蹈教室">
+
   <!-- 骨層：先講為什麼，不是先講學得到什麼。
        素材來自企劃書開頭那一幕（有人流淚、有人擁抱，然後散了）——
        那是 Lily 老師群真正的痛，比任何技巧承諾都準。 -->
@@ -291,6 +322,33 @@
     <p>那些感動是真的。可惜的是——<em>其中有些人，本來是可以被你幫到的。</em></p>
     <p>這兩個小時不是要你學會推銷。是讓你那 30 分鐘裡的愛，
        走得完最後一哩路，<em>變成對方願意踏出的下一步</em>。</p>
+  </div>
+
+  <!-- 老師群卡在哪＝提案書 §1。狀況一、二照抄提案原文；
+       狀況三是老師 2026-09-27 補的第三個痛點（他的原話直接用，不改寫）。
+       三種的共同點才是這場的立足點，所以 verdict 不能拿掉。 -->
+  <h2>老師群卡在哪</h2>
+  <div class="pain">
+    <div>
+      <span class="tag">狀況一</span>
+      <h3>乾貨講太多</h3>
+      <p>30 分鐘塞滿知識。聽眾說「你講得真好」，然後就走了。</p>
+    </div>
+    <div>
+      <span class="tag">狀況二</span>
+      <h3>太想推銷</h3>
+      <p>怕沒人約，講得太急。聽眾一感覺到，就關上了。</p>
+    </div>
+    <div>
+      <span class="tag">狀況三</span>
+      <h3>結束了就結束了</h3>
+      <p>專業很好、分享也很感動，觀眾聽完也覺得老師講得很棒，<br>
+         但活動結束就結束了，沒有自然地走到下一步。</p>
+    </div>
+  </div>
+  <div class="verdict">
+    這三種看起來不一樣，其實是<em>同一件事沒做</em>──<br>
+    沒有讓聽眾，<em>自己看見自己</em>。
   </div>
 
   <h2>時間・地點</h2>
@@ -308,15 +366,17 @@
     <div class="free">● 免費參加。教室位子固定，先確認出席才好幫你留位。</div>
   </div>
 
-  <!-- 當天怎麼走＝提案書 §3「培訓當天・五站」，海報只負責主題與時間地點。
+  <!-- 培訓當天・五站＝提案書 §3，連「第幾分鐘」都照抄。
+       老師 2026-09-27：五站比時間表好。時間表把兩小時變成行程，
+       五站講的是「會走到哪裡」——而且改時間不用回來改這一段。
        內容有異動時改 00-企劃書.html，再同步過來。 -->
-  <h2>當天怎麼走</h2>
+  <h2>培訓當天・五站</h2>
   <ul class="run">
-    <li><u>14:00</u><div><b>先講「你的那一天」</b><span>不自我介紹。從一場沙龍會結束後的畫面開始──有人流淚、有人擁抱，然後散了。</span></div></li>
-    <li><u>14:15</u><div><b>為什麼兩種都沒用</b><span>拆開乾貨與推銷的共同盲點，給出一張地圖：影響力的四塊肌肉，有先後順序。</span></div></li>
-    <li><u>14:40</u><div><b>三招，今天就能用</b><span>開場怎麼講自己的故事、怎麼用問句讓對方開口、怎麼收尾不像推銷。當場練、當場改。</span></div></li>
-    <li><u>15:10</u><div><b>現場改造一位老師</b><span>請一位老師把她的 30 分鐘沙龍會攤開，當場拆給大家看：哪一塊還沒練到、下一場加在哪。</span></div></li>
-    <li><u>15:35</u><div><b>找到你自己先練哪一塊</b><span>每位老師看自己的健檢分數，對照四種典型症狀，知道下一步先練哪一塊。</span></div></li>
+    <li><u>0 – 15 分</u><div><b>先講「你的那一天」</b><span>不自我介紹。從一場沙龍會結束後的畫面開始──有人流淚、有人擁抱，然後散了。</span></div></li>
+    <li><u>15 – 40 分</u><div><b>為什麼兩種都沒用</b><span>拆開乾貨與推銷的共同盲點，給出一張地圖：影響力的四塊肌肉，有先後順序。</span></div></li>
+    <li><u>40 – 70 分</u><div><b>三招，今天就能用</b><span>開場怎麼講自己的故事、怎麼用問句讓對方開口、怎麼收尾不像推銷。當場練、當場改。</span></div></li>
+    <li><u>70 – 95 分</u><div><b>現場改造一位老師</b><span>請一位老師把她的 30 分鐘沙龍會攤開，當場拆給大家看：哪一塊還沒練到、下一場加在哪。</span></div></li>
+    <li><u>95 – 120 分</u><div><b>找到你自己先練哪一塊</b><span>每位老師看自己的健檢分數，對照四種典型症狀，知道下一步先練哪一塊。</span></div></li>
   </ul>
 
   <!-- 三件帶走＝提案書 §4，順序照提案（健檢→健身房→版型），不要自己重排。 -->
@@ -384,7 +444,7 @@
 /* 這頁自己的後端（寫「10/29報名」分頁、回累計人數）。
    跟 /videoquiz/ 那支是兩份不同的試算表——不同活動、不同生命週期，混在一起只會互相干擾。
    🔴 部署步驟在同夾 apps-script.gs 開頭；沒填這條網址時，送出會明講「還沒接上」。 */
-var SHEET_API = "";
+var SHEET_API = "https://script.google.com/macros/s/AKfycbxpvqaGQWGvtGcKeM9iyNupG9CWq1fnq1E-8YVUuYYhcoQ9e1xE3kGibBa_pK3ZY9rHBg/exec";
 
 /* 養課走官網那條既有的路，不另開：同一個 /exec、同一個 action=subscribe，
    寫進「(漏斗)電子報訂閱」再打 LaunChill Workflow②（歡迎信）。
