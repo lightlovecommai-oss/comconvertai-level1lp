@@ -155,6 +155,44 @@ function safeCb_(s) {
 /** 預設只回人數（填答頁的社會證明）；action=stats 回選項分佈（統計頁）。
     兩者都不回姓名或 email——GET 這條路上沒有任何一個分支碰得到那兩欄，
     stats_() 的 getRange 也只框答案欄。 */
+/* 一次性修髒列——**手動跑，不掛在任何端點上**。
+   在 Apps Script 編輯器上方的函式下拉選 cleanupLegacyRows → 執行，看執行紀錄。
+
+   要修兩種列：
+   ① 欄位左移一格：2026-09-26 加「姓名」欄之前填的那幾列，email 落在姓名欄、
+      最後一題掉出表外。認法＝姓名欄裡有 "@"。把 B~G 往右搬一格、B 清空。
+      ⚠️ 姓名救不回來（那時根本沒收），只能留白。
+   ② 老師自己的「光頭測試」列，五題全選最差，會把統計拉向「這群人什麼都不會」。
+
+   刻意由下往上跑：刪列會讓下面的列號整個往上移，由上往下刪會跳過列。
+   重複執行是安全的——修過的列姓名欄已經沒有 "@"，測試列已經不在。
+   跑完可以把這支函式整個刪掉，它不是長期資產。 */
+function cleanupLegacyRows() {
+  var sh = sheet_();
+  var last = sh.getLastRow();
+  if (last < 2) return;
+
+  var shifted = 0, removed = 0;
+  var rows = sh.getRange(2, 1, last - 1, HEAD.length).getValues();
+
+  for (var i = rows.length - 1; i >= 0; i--) {
+    var rowNum = i + 2;
+    var nameCell = String(rows[i][1] || '').trim();
+
+    if (nameCell === '光頭測試') {
+      sh.deleteRow(rowNum);
+      removed += 1;
+    } else if (nameCell.indexOf('@') >= 0) {
+      // B~G（索引 1~6）往右搬一格變成 C~H，姓名欄留白
+      var fixed = [rows[i][0], ''].concat(rows[i].slice(1, HEAD.length - 1));
+      sh.getRange(rowNum, 1, 1, HEAD.length).setValues([fixed]);
+      shifted += 1;
+    }
+  }
+
+  Logger.log('修好左移 ' + shifted + ' 列、刪掉測試 ' + removed + ' 列，現在共 ' + count_() + ' 筆。');
+}
+
 function doGet(e) {
   var params = (e && e.parameter) || {};
   var cb = safeCb_(params.callback);
