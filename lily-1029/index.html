@@ -388,10 +388,11 @@
       <p>15 題、5 分鐘。量出自己四塊肌肉的分數，知道先練哪一塊最有感。</p></div>
     <div><b>影響力健身房</b><u>課後可加入</u>
       <p>每週練一塊肌肉。有進度、有社群，不用等下一場才能練。</p></div>
-    <div><b>沙龍會版型</b><u>課後帶回</u>
-      <!-- 提案書原文列了四格「開場、快贏、缺口、邀請」。「缺口」是對外禁用的赤字語言，
-           又不該自己替產品發明新格名，所以這裡只講「從開場到邀請、四個段落」。
-           版型本身的格名以提案書為準。 -->
+    <div><b>沙龍會版型</b><u>課後用 LINE 發</u>
+      <!-- 發放走 LINE OA（老師 2026-09-27 定），不走 email、也不是當天發紙本。
+           所以 email 欄的鉤子不能再拿版型當誘因——兩條路分開，別互相綁。
+           提案書原文列了四格「開場、快贏、缺口、邀請」。「缺口」是對外禁用的赤字語言，
+           又不該自己替產品發明新格名，所以這裡只講「從開場到邀請、四個段落」。 -->
       <p>一張結構表：從開場到邀請，四個段落。下一場直接套用。</p></div>
   </div>
 
@@ -422,15 +423,20 @@
     </div>
 
     <div class="fq mailbox">
-      <span class="q">留個 email，課後把版型寄給你</span>
-      <p class="why">沙龍會版型＋當天重點整理，課後寄一次。
+      <!-- 鉤子刻意是「持續的乾貨」不是「某一份檔案」：
+           承諾一份具體交付物＝課後欠一件債，而且是老師不想扛的那種。
+           版型走 LINE OA 發（見上面三件帶走），跟 email 是兩條路，不要互相綁。 -->
+      <span class="q">留個 email，收影響力乾貨</span>
+      <p class="why">練影響力的方法，之後陸續寄給你。
          沒有 email 也完全沒關係，當天來就好。</p>
       <input id="email" type="email" inputmode="email" autocomplete="email" placeholder="選填">
     </div>
 
     <button id="send" type="button">送出</button>
     <div id="err" role="alert"></div>
-    <p class="fine">只用來這場活動的聯絡與課後資料，不會給別人、不會拿去打廣告。</p>
+    <!-- 舊版寫「不會拿去打廣告」是假的（這批名單會進廣告受眾），承諾做不到就不要寫。
+         現在只承諾做得到的那一件：寄給你的是乾貨。 -->
+    <p class="fine">email 只會給你影響力乾貨，不會給別人。</p>
   </div>
   </div><!-- /#pitch -->
 
@@ -544,14 +550,16 @@ document.getElementById("send").onclick = function(){
     document.getElementById("pitch").hidden = true;
     document.getElementById("done").hidden = false;
 
-    // textContent 不是 innerHTML——名字是使用者輸入的，innerHTML 就是一個 XSS 缺口
+    // textContent 不是 innerHTML——名字是使用者輸入的，innerHTML 就是一個 XSS 漏洞
     var come = (going === "我會到");
     document.getElementById("thx").textContent = come
       ? nm + "，收到了，10/29 見。"
       : nm + "，收到了，謝謝你跟我說一聲。";
+    // 沒留 email 的人不能講「乾貨會寄給你」——那是一句他收不到的承諾
     document.getElementById("sub").textContent = come
       ? "位子留好了。當天把你最近一場沙龍會的內容帶在身上，我們會當場拆。"
-      : "這次來不了沒關係。課後的沙龍會版型一樣會寄給你，下一場再見。";
+      : (em ? "這次來不了沒關係。影響力乾貨一樣會寄給你，下一場再見。"
+            : "這次來不了沒關係，謝謝你特地回一聲。下一場再見。");
     // 來不了的人不需要看到地址卡，那只是提醒他錯過了
     document.querySelector("#done .when").hidden = !come;
 
