@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<!--
+  Lily 沙龍會 × 平凡人光頭｜10/29 講師培訓・出席確認頁
+  ⚠️ 這頁不是 LP，是**出席確認（RSVP）**，借 lp 子網域的託管行為（單頁・不索引・活動後退役）。
+     跟 /lily/（通路提案書）、/videoquiz/（課前調查）同一個模式，都跟 LP1/2/3 產品線無關。
+
+  真相在 productkit/9-Lily沙龍會通路/01-報名頁.md —— 改內容先改那邊。
+  複製這套再做一份問卷／報名頁的步驟，看 ../videoquiz/README.md。
+
+  🔴 收資料要能用，得先部署 apps-script.gs 並把網址貼進下面的 SHEET_API。
+     沒填時頁面會明講「還沒接上」，**不會靜靜吞掉報名**。
+
+  🔴 人名一律「平凡人光頭」。海報上印的是「光頭教練」，那是簡稱，違反 2026-09-26 的規則；
+     這頁不跟著錯。（規則全文見 productkit/1-手冊（內部）/01-核心定義字典.md）
+-->
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, follow">
+<title>10/29 講師培訓報名｜Lily 老師幸福學院 × 平凡人光頭</title>
+<meta name="description" content="10/29（四）14:00–16:00，沙龍會講師的銷講實戰訓練。30 分鐘講出影響力，讓感動變成行動。">
+<style>
+  :root {
+    /* 底色沿用 /lily/ 提案書那套米紙（Lily 老師已經看過、認得），
+       主色換成海報的酒紅玫瑰——大家是先看到海報才點進來的，兩邊要對得起來。
+       🔴 行動鈕刻意留我們的磚橘 --rust：Lily 的玫瑰負責「這是誰辦的」，
+          我們的磚橘負責「要按哪裡」。兩個顏色各自有工作，不要合併。 */
+    --paper: #FDF7F4;
+    --card: #FFFFFF;
+    --blush: #FBEDEC;
+    --ink: #4A3428;
+    --ink-soft: #857A70;
+    --rose: #A62F45;
+    --rose-soft: #C86A7C;
+    --rust: #C6603A;
+    --gold: #D4A34A;
+    --green: #6B8A72;
+    --line: #F0DFDA;
+  }
+  * { box-sizing: border-box; }
+
+  /* 🔴 字級全部走 rem，右上角那顆「放大字」是改 html 的 font-size。
+     不要把字級寫回 px，寫回去那顆鈕對該元素就失效。
+     受眾是 Lily 老師群，跟 /videoquiz/ 同一個判斷：能放大字的頁面才用得下去。 */
+  html { font-size: 20px; }
+  html.big { font-size: 25px; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+    font-size: 1rem;
+    line-height: 1.9;
+    -webkit-font-smoothing: antialiased;
+  }
+  /* 中文斷行：不讓標點孤行、不在詞中間斷 */
+  p, h1, h2, h3, li, .lead, .big, .kv {
+    text-wrap: pretty;
+    line-break: strict;
+    overflow-wrap: break-word;
+  }
+  .wrap { max-width: 34rem; margin: 0 auto; padding: 0 1rem 4rem; }
+
+  /* ── 頂條：品牌 + 放大字 ───────────────────────── */
+  .top {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: .6rem; padding: .9rem 0 .2rem;
+  }
+  .mark { font-size: .72rem; line-height: 1.5; color: var(--ink-soft); }
+  .mark b { color: var(--rose); font-weight: 700; }
+  #zoom {
+    flex: none; border: 1px solid var(--line); background: var(--card);
+    color: var(--ink-soft); border-radius: 999px;
+    padding: .35rem .8rem; font-size: .72rem; cursor: pointer;
+    font-family: inherit;
+  }
+  #zoom:hover { border-color: var(--rose-soft); color: var(--rose); }
+
+  /* ── Hero ─────────────────────────────────────── */
+  .hero { padding: 1.2rem 0 .5rem; }
+  .for {
+    display: inline-block; background: var(--blush); color: var(--rose);
+    border-radius: 999px; padding: .25rem .9rem;
+    font-size: .78rem; font-weight: 700; letter-spacing: .02em;
+  }
+  h1 {
+    font-family: "Noto Serif TC", "Songti TC", "Times New Roman", serif;
+    font-size: 2.3rem; line-height: 1.25; margin: .7rem 0 .2rem;
+    color: var(--rose); font-weight: 900; letter-spacing: .01em;
+  }
+  h1 small { display: block; font-size: .95rem; color: var(--ink); font-weight: 700; letter-spacing: .04em; margin-top: .5rem; }
+  .band {
+    display: inline-block; background: var(--rose); color: #fff;
+    border-radius: .4rem; padding: .3rem .9rem; margin-top: .6rem;
+    font-size: 1.05rem; font-weight: 700; letter-spacing: .06em;
+  }
+
+  /* ── 骨：為什麼辦這場 ──────────────────────────── */
+  .bone {
+    background: var(--card); border: 1px solid var(--line);
+    border-left: .28rem solid var(--gold);
+    border-radius: 0 1rem 1rem 0; padding: 1rem 1.1rem;
+    margin: 1.4rem 0; font-size: .92rem;
+  }
+  .bone p { margin: 0 0 .7rem; }
+  .bone p:last-child { margin-bottom: 0; }
+  .bone em { font-style: normal; color: var(--rose); font-weight: 700; }
+
+  /* ── 區塊標題 ─────────────────────────────────── */
+  h2 {
+    font-size: 1.1rem; margin: 2.2rem 0 .8rem; color: var(--ink);
+    display: flex; align-items: center; gap: .5rem;
+  }
+  h2::before {
+    content: ""; width: .32rem; height: 1.05rem;
+    background: var(--rose); border-radius: 999px; flex: none;
+  }
+
+  /* ── 時間地點 ─────────────────────────────────── */
+  .when {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 1.1rem; padding: 1.1rem 1.2rem;
+    box-shadow: 0 2px 14px rgba(166,47,69,.06);
+  }
+  .date {
+    font-family: "Noto Serif TC", "Songti TC", serif;
+    font-size: 2.5rem; font-weight: 900; color: var(--rose);
+    line-height: 1.1; letter-spacing: .01em;
+  }
+  .date i { font-style: normal; font-size: .9rem; vertical-align: .9rem; margin-left: .3rem; }
+  .time { font-size: 1.25rem; font-weight: 700; margin-top: .1rem; }
+  .open { display: inline-block; background: var(--blush); color: var(--rose);
+          border-radius: 999px; padding: .1rem .7rem; font-size: .76rem; font-weight: 700; margin-top: .35rem; }
+  .where { border-top: 1px dashed var(--line); margin-top: .9rem; padding-top: .9rem; }
+  .where b { font-size: 1.1rem; color: var(--rose); }
+  .where p { margin: .3rem 0 0; font-size: .84rem; color: var(--ink-soft); line-height: 1.7; }
+  .free { margin-top: .9rem; font-size: .88rem; font-weight: 700; color: var(--green); }
+
+  /* ── 四個帶走 ─────────────────────────────────── */
+  .four { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+  .four div {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: .9rem; padding: .8rem .7rem; text-align: center;
+  }
+  .four b { display: block; font-size: 1rem; color: var(--rose); }
+  .four span { font-size: .78rem; color: var(--ink-soft); }
+
+  /* ── 當天怎麼走 ───────────────────────────────── */
+  .run { list-style: none; padding: 0; margin: 0; }
+  .run li {
+    display: flex; gap: .8rem; padding: .7rem 0;
+    border-bottom: 1px dashed var(--line); font-size: .88rem;
+  }
+  .run li:last-child { border-bottom: 0; }
+  .run u {
+    flex: none; width: 4.2rem; text-decoration: none;
+    color: var(--rose); font-weight: 700; font-size: .8rem; padding-top: .15rem;
+  }
+  .run b { display: block; font-size: .95rem; }
+  .run span { color: var(--ink-soft); }
+
+  /* ── 帶走三件 ─────────────────────────────────── */
+  .take { display: grid; gap: .6rem; }
+  .take div {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: .9rem; padding: .85rem 1rem;
+  }
+  .take b { color: var(--rose); font-size: .98rem; }
+  .take u {
+    text-decoration: none; background: var(--blush); color: var(--rose);
+    border-radius: 999px; padding: .05rem .55rem; font-size: .7rem;
+    font-weight: 700; margin-left: .4rem; vertical-align: .12rem;
+  }
+  .take p { margin: .25rem 0 0; font-size: .83rem; color: var(--ink-soft); }
+
+  /* ── 表單 ─────────────────────────────────────── */
+  .form {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 1.2rem; padding: 1.2rem; margin-top: 1rem;
+    box-shadow: 0 3px 18px rgba(166,47,69,.07);
+  }
+  .fq { margin-bottom: 1.1rem; }
+  .fq > label, .fq > .q {
+    display: block; font-size: .95rem; font-weight: 700; margin-bottom: .5rem;
+  }
+  .fq .note { font-weight: 400; color: var(--ink-soft); font-size: .8rem; }
+  .opts { display: flex; gap: .5rem; flex-wrap: wrap; }
+  .opt {
+    flex: 1 1 auto; min-width: 6rem;
+    border: 1.5px solid var(--line); background: var(--paper);
+    color: var(--ink); border-radius: .7rem; padding: .7rem .6rem;
+    font-size: .92rem; font-family: inherit; cursor: pointer; line-height: 1.4;
+  }
+  .opt:hover { border-color: var(--rose-soft); }
+  .opt.on { border-color: var(--rose); background: var(--blush); color: var(--rose); font-weight: 700; }
+  input[type=text], input[type=email] {
+    width: 100%; border: 1.5px solid var(--line); background: var(--paper);
+    border-radius: .7rem; padding: .75rem .8rem;
+    font-size: 1rem; font-family: inherit; color: var(--ink);
+  }
+  input:focus { outline: none; border-color: var(--rose); background: #fff; }
+  .mailbox { background: var(--blush); border-radius: .9rem; padding: .9rem 1rem; }
+  .mailbox .q { margin-bottom: .3rem; }
+  .mailbox .why { font-size: .82rem; color: var(--ink-soft); margin: 0 0 .6rem; }
+  .mailbox input { background: #fff; border-color: #fff; }
+
+  /* 🔴 一頁一顆錢鈕：報名是唯一的實心漸層鈕。
+     「來不了」走幽靈框，看得見但不搶——它要的是誠實回覆，不是轉換。 */
+  #send {
+    width: 100%; border: 0; border-radius: .8rem; cursor: pointer;
+    background: linear-gradient(135deg, #D2743F, var(--rust));
+    color: #fff; font-size: 1.1rem; font-weight: 700; font-family: inherit;
+    padding: .95rem; margin-top: .3rem;
+    box-shadow: 0 4px 14px rgba(198,96,58,.3);
+  }
+  #send:disabled { opacity: .6; cursor: default; box-shadow: none; }
+  #err { color: var(--rust); font-size: .85rem; margin-top: .6rem; min-height: 1.2em; font-weight: 700; }
+  .fine { font-size: .76rem; color: var(--ink-soft); margin-top: .7rem; line-height: 1.7; }
+
+  /* ── 感謝頁 ───────────────────────────────────── */
+  .done { text-align: center; padding: 1.5rem 0; }
+  .done .big {
+    font-family: "Noto Serif TC", "Songti TC", serif;
+    font-size: 1.7rem; font-weight: 900; color: var(--rose); line-height: 1.4;
+  }
+  .done .sub { font-size: .92rem; color: var(--ink-soft); margin-top: .5rem; }
+  .card-quiz {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 1.1rem; padding: 1.2rem; margin-top: 1.4rem; text-align: left;
+  }
+  .card-quiz b { color: var(--rose); font-size: 1.05rem; }
+  .card-quiz p { font-size: .85rem; color: var(--ink-soft); margin: .4rem 0 .9rem; }
+  .go {
+    display: block; text-align: center; text-decoration: none;
+    border: 1.5px solid var(--rose); color: var(--rose); background: #fff;
+    border-radius: .8rem; padding: .8rem; font-weight: 700; font-size: 1rem;
+  }
+  .go:hover { background: var(--blush); }
+
+  footer {
+    margin-top: 2.5rem; padding-top: 1.2rem; border-top: 1px solid var(--line);
+    text-align: center; font-size: .78rem; color: var(--ink-soft); line-height: 1.8;
+  }
+  footer b { color: var(--rose); }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="mark"><b>Lily 老師幸福學院</b> × <b>平凡人光頭</b><br>愛　成長　影響力</div>
+    <button id="zoom" type="button">放大字</button>
+  </div>
+
+  <!-- 感謝頁放在 DOM 最前面（不是最後面）：送出後 scrollTo(0) 看到的必須是
+       「收到了」，不是又一次的說服文案。放最後面就得靠 scrollIntoView 去追，
+       而那在收合其他區塊的同一個 tick 裡算出來的位置會是錯的。 -->
+  <section class="done" id="done" hidden>
+    <div class="big" id="thx"></div>
+    <div class="sub" id="sub"></div>
+
+    <div class="when" style="margin-top:1.4rem;text-align:left">
+      <div class="date">10 / 29 <i>（四）</i></div>
+      <div class="time">14:00 – 16:00</div>
+      <span class="open">13:30 開放入場</span>
+      <div class="where">
+        <b>宸羽舞蹈教室</b>
+        <p>臺北市忠孝東路四段 209 號 9 樓之 1<br>
+           捷運忠孝敦化站 2 號出口走 1 分鐘・一樓是屈臣氏</p>
+      </div>
+    </div>
+
+    <div class="card-quiz">
+      <b>先做影響力健檢，當天更有感</b>
+      <p>15 題、5 分鐘，量出你四塊肌肉的分數。
+         最後一段課程會用到你的結果——先測過，當天就知道自己先練哪一塊最有感。</p>
+      <a class="go" href="https://quiz.atpifit.com/" target="_blank" rel="noopener">▸ 開始健檢（5 分鐘）</a>
+    </div>
+  </section>
+
+  <div id="pitch">
+  <section class="hero" id="hero">
+    <span class="for">沙龍會講師・銷講實戰訓練</span>
+    <h1>30 分鐘講出影響力<small>用專業分享愛，用影響力創造更多可能</small></h1>
+    <div class="band">讓感動　變成行動</div>
+  </section>
+
+  <!-- 骨層：先講為什麼，不是先講學得到什麼。
+       素材來自企劃書開頭那一幕（有人流淚、有人擁抱，然後散了）——
+       那是 Lily 老師群真正的痛，比任何技巧承諾都準。 -->
+  <div class="bone">
+    <p>一場沙龍會結束，有人紅了眼眶，有人走過來抱你。<br>
+       然後大家收好東西，散了。</p>
+    <p>那些感動是真的。可惜的是——<em>其中有些人，本來是可以被你幫到的。</em></p>
+    <p>這兩個小時不是要你學會推銷。是讓你那 30 分鐘裡的愛，
+       走得完最後一哩路，<em>變成對方願意踏出的下一步</em>。</p>
+  </div>
+
+  <h2>時間・地點</h2>
+  <div class="when">
+    <div class="date">10 / 29 <i>（四）</i></div>
+    <div class="time">14:00 – 16:00</div>
+    <span class="open">13:30 開放入場</span>
+    <div class="where">
+      <b>宸羽舞蹈教室</b>
+      <p>臺北市忠孝東路四段 209 號 9 樓之 1<br>
+         捷運忠孝敦化站 2 號出口走 1 分鐘・一樓是屈臣氏</p>
+    </div>
+    <!-- 講「位子要抓」不講「名額有限」：前者是場地的事實與請求，
+         後者是拿稀缺推人。要的是他因為想來而來。 -->
+    <div class="free">● 免費參加。教室位子固定，先確認出席才好幫你留位。</div>
+  </div>
+
+  <h2>兩小時練四件事</h2>
+  <div class="four">
+    <div><b>精準內容</b><span>講到重點</span></div>
+    <div><b>建立連結</b><span>打動人心</span></div>
+    <div><b>自然邀請</b><span>帶出行動</span></div>
+    <div><b>實戰演練</b><span>看見改變</span></div>
+  </div>
+
+  <h2>當天怎麼走</h2>
+  <ul class="run">
+    <li><u>14:00</u><div><b>先講「你的那一天」</b><span>從一場沙龍會結束後的畫面開始。不自我介紹。</span></div></li>
+    <li><u>14:15</u><div><b>為什麼乾貨和推銷都沒用</b><span>兩種聽起來相反，其實是同一件事沒做。</span></div></li>
+    <li><u>14:40</u><div><b>三招，今天就能用</b><span>開場怎麼說自己的故事、怎麼用問句讓對方開口、怎麼收尾不像推銷。當場練、當場改。</span></div></li>
+    <li><u>15:10</u><div><b>現場改造一位老師</b><span>把你的 30 分鐘攤開，當場拆給大家看。</span></div></li>
+    <li><u>15:35</u><div><b>找到你先練哪一塊最有感</b><span>對照自己的健檢分數，帶著方向回去。</span></div></li>
+  </ul>
+
+  <h2>你會帶走什麼</h2>
+  <div class="take">
+    <div><b>影響力健檢</b><u>報名就送</u>
+      <p>15 題、5 分鐘。量出自己四塊肌肉的分數，知道先練哪一塊最有感。</p></div>
+    <div><b>沙龍會版型</b><u>課後帶回</u>
+      <p>一張結構表，下一場直接套用。</p></div>
+    <div><b>影響力健身房</b><u>課後可加入</u>
+      <p>每週練一塊肌肉。有進度、有夥伴，不用等下一場才能練。</p></div>
+  </div>
+
+  <h2>確認出席</h2>
+  <div class="form" id="form">
+
+    <div class="fq">
+      <span class="q">你這次會到嗎？</span>
+      <div class="opts" id="go-opts">
+        <button class="opt" type="button" data-v="我會到">我會到</button>
+        <button class="opt" type="button" data-v="這次來不了">這次來不了</button>
+      </div>
+    </div>
+
+    <div class="fq" id="cnt-box" hidden>
+      <span class="q">總共幾位？<span class="note">（含你自己，帶夥伴一起來也可以）</span></span>
+      <div class="opts" id="cnt-opts">
+        <button class="opt" type="button" data-v="1">1 位</button>
+        <button class="opt" type="button" data-v="2">2 位</button>
+        <button class="opt" type="button" data-v="3">3 位</button>
+        <button class="opt" type="button" data-v="4 位以上">4 位以上</button>
+      </div>
+    </div>
+
+    <div class="fq">
+      <label for="name">怎麼稱呼你？<span class="note">（必填）</span></label>
+      <input id="name" type="text" autocomplete="name" placeholder="你的名字或平常用的稱呼">
+    </div>
+
+    <div class="fq mailbox">
+      <span class="q">留個 email，課後把版型寄給你</span>
+      <p class="why">沙龍會版型＋當天重點整理，課後寄一次。
+         沒有 email 也完全沒關係，當天來就好。</p>
+      <input id="email" type="email" inputmode="email" autocomplete="email" placeholder="選填">
+    </div>
+
+    <button id="send" type="button">送出</button>
+    <div id="err" role="alert"></div>
+    <p class="fine">只用來這場活動的聯絡與課後資料，不會給別人、不會拿去打廣告。</p>
+  </div>
+  </div><!-- /#pitch -->
+
+  <footer>
+    <b>Lily 老師幸福學院</b> × <b>平凡人光頭</b><br>
+    用專業分享愛　用影響力創造更多可能<br>
+    讓更多人因為愛，活出更幸福的自己
+  </footer>
+</div>
+
+<script>
+/* 這頁自己的後端（寫「10/29報名」分頁、回累計人數）。
+   跟 /videoquiz/ 那支是兩份不同的試算表——不同活動、不同生命週期，混在一起只會互相干擾。
+   🔴 部署步驟在同夾 apps-script.gs 開頭；沒填這條網址時，送出會明講「還沒接上」。 */
+var SHEET_API = "";
+
+/* 養課走官網那條既有的路，不另開：同一個 /exec、同一個 action=subscribe，
+   寫進「(漏斗)電子報訂閱」再打 LaunChill Workflow②（歡迎信）。
+   source=lily1029 是事後分辨名單來源的唯一依據。
+   失敗只寫 console——養課寄不出去不可以害報名收不到。 */
+var NEWSLETTER_API = "https://script.google.com/macros/s/AKfycbz7VxeV8ZmjSiGNO-G3ZwRLPg-H1H2NjXHy6brCU5yVaVoYOXB-LItU750j81Q3eno/exec";
+
+var going = "", count = "", sent = false;
+
+/* 字級開關：只動 html 的 font-size，整頁 rem 一起變。記在 localStorage，回訪不用再按。 */
+var zoom = document.getElementById("zoom");
+function setBig(on){
+  document.documentElement.classList.toggle("big", on);
+  zoom.textContent = on ? "字變小" : "放大字";
+  try { localStorage.setItem("lily1029_big", on ? "1" : "0"); } catch(e){}
+}
+zoom.onclick = function(){ setBig(!document.documentElement.classList.contains("big")); };
+try { if (localStorage.getItem("lily1029_big") === "1") setBig(true); } catch(e){}
+
+var err = document.getElementById("err");
+var cntBox = document.getElementById("cnt-box");
+
+function pick(box, cb){
+  box.addEventListener("click", function(ev){
+    var b = ev.target.closest(".opt");
+    if (!b) return;
+    box.querySelectorAll(".opt").forEach(function(x){ x.classList.remove("on"); });
+    b.classList.add("on");
+    err.textContent = "";
+    cb(b.dataset.v);
+  });
+}
+
+pick(document.getElementById("go-opts"), function(v){
+  going = v;
+  // 來不了的人不必回答人數——問了只是讓他多看一個跟他無關的問題
+  var come = (v === "我會到");
+  cntBox.hidden = !come;
+  if (!come) { count = ""; document.querySelectorAll("#cnt-opts .opt").forEach(function(x){ x.classList.remove("on"); }); }
+});
+
+pick(document.getElementById("cnt-opts"), function(v){ count = v; });
+
+document.getElementById("send").onclick = function(){
+  if (sent) return;
+  var btn = this;
+
+  if (!going){
+    err.textContent = "先選一下你這次會不會到。";
+    return;
+  }
+  if (going === "我會到" && !count){
+    err.textContent = "還沒選人數，我要抓場地的位子。";
+    return;
+  }
+  var nm = document.getElementById("name").value.trim();
+  if (!nm){
+    err.textContent = "還沒留名字，我不知道是誰報的。";
+    document.getElementById("name").focus();
+    return;
+  }
+  /* email 選填：空的直接放行。有填才驗，而且只擋明顯打錯的——
+     把想留的人擋在外面，比收到一個怪字串糟糕得多。 */
+  var em = document.getElementById("email").value.trim();
+  if (em && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)){
+    err.textContent = "email 看起來不太對，再檢查一下；不想留的話清空就好。";
+    return;
+  }
+  if (!SHEET_API){
+    err.textContent = "報名表還沒接上，請聯絡平凡人光頭。";
+    return;
+  }
+
+  err.textContent = "";
+  btn.disabled = true;
+  btn.textContent = "送出中...";
+
+  // 順手進官網訂閱名單。不 await、不擋主流程；沒留 email 就不打（空的送過去只會堆錯誤）
+  if (em) {
+    fetch(NEWSLETTER_API, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ action:"subscribe", email:em, name:nm, source:"lily1029", page:"/lily-1029/" })
+    }).catch(function(e){ console.warn("訂閱沒進去：", e); });
+  }
+
+  // text/plain 是為了不觸發 CORS preflight——Apps Script 不回 preflight，送 json 會被擋
+  fetch(SHEET_API, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify({ name: nm, going: going, count: count, email: em })
+  }).then(function(r){ return r.json(); }).then(function(d){
+    if (d.status !== "ok") throw new Error(d.message || "bad status");
+    sent = true;
+    // 說服用的整段收掉——它的工作做完了。時間地點在感謝頁裡有一份完整的。
+    document.getElementById("pitch").hidden = true;
+    document.getElementById("done").hidden = false;
+
+    // textContent 不是 innerHTML——名字是使用者輸入的，innerHTML 就是一個 XSS 缺口
+    var come = (going === "我會到");
+    document.getElementById("thx").textContent = come
+      ? nm + "，收到了，10/29 見。"
+      : nm + "，收到了，謝謝你跟我說一聲。";
+    document.getElementById("sub").textContent = come
+      ? "位子留好了。當天把你最近一場沙龍會的內容帶在身上，我們會當場拆。"
+      : "這次來不了沒關係。課後的沙龍會版型一樣會寄給你，下一場再見。";
+    // 來不了的人不需要看到地址卡，那只是提醒他錯過了
+    document.querySelector("#done .when").hidden = !come;
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }).catch(function(e){
+    btn.disabled = false;
+    btn.textContent = "送出";
+    err.textContent = "送出失敗，網路可能斷了。再按一次試試。";
+    console.warn(e);
+  });
+};
+</script>
+</body>
+</html>
