@@ -64,15 +64,22 @@ footer{max-width:46rem;margin:0 auto;padding:1.5rem clamp(1.2rem,5vw,3rem) 2rem;
 color:var(--ink-3);border-top:1px solid var(--rule);}
 </style>
 <style>
-/* 插槽：這一版還沒有的素材，刻意留成看得出是空的洞（四層流程 §沒有原料不生內容） */
-.slot{border:2px dashed var(--act);border-radius:7px;background:var(--act-tint);
-padding:2.1rem 1.3rem;text-align:center;margin:1.9rem 0;}
-.slot b{display:block;font-family:var(--serif);font-weight:900;color:var(--act-deep);font-size:1.1rem;}
-.slot i{display:block;font-style:normal;font-size:.88rem;color:var(--ink-2);margin-top:.45rem;line-height:1.7;}
-.slot em{font-family:var(--data);font-style:normal;font-size:.72rem;letter-spacing:.1em;
-color:var(--ink-3);display:block;margin-top:.6rem;text-transform:uppercase;}
+/* 2026-10-15 定稿：`.slot` 全數關閉——原本兩個洞（身心靈見證、時間軸）都已經有真素材，
+   換成 圖9／圖10。這一版沒有空插槽，所以插槽樣式一起拿掉，留著只會讓人以為還有洞沒補。 */
 .note{background:var(--t-tint);border-left:4px solid var(--t-deep);padding:.9rem 1.1rem;
 font-size:.94rem;color:var(--ink-2);margin:1.6rem 0;border-radius:0 6px 6px 0;}
+
+/* 見證牆：真截圖，已裁掉頭像欄與名字列（`療癒師銷講簡報/_裁見證.py`）。
+   不打碼——打碼看起來像在藏東西，裁切看起來就是一段對話。 */
+.wall{display:grid;gap:1.2rem;grid-template-columns:1fr;margin:1.9rem 0;}
+@media(min-width:40rem){.wall{grid-template-columns:1fr 1fr;align-items:start;}}
+.wall figure{margin:0;}
+
+/* 2026-10-15 老師定稿：時間軸改用 圖10 的 PNG，手刻的 `.flow` 時間軸退役。
+   🔴 原本那段註解寫著「不出 PNG，因為手機上讀不到」——那個顧慮還在，
+   但它被上面那串〈你會帶走的，是這幾件事〉的 ol 接住了：六件事的全文就在圖的正上方，
+   手機讀者不靠圖也拿得到內容，圖只負責讓人一眼看見節奏。
+   要再動時間軸，改的是 productkit `7-KOL通路/圖/圖10-90分鐘四節點橫式.html` 再重出。 */
 </style>
 <div class="flag">草稿 — 給通路方確認用・尚未對外公開</div>
 <div class="sheet">
@@ -155,20 +162,17 @@ font-size:.94rem;color:var(--ink-2);margin:1.6rem 0;border-radius:0 6px 6px 0;}
 <li>一位<strong>做一對一的工作者</strong>：學完之後，一次對話就收到 <strong>4,000 元</strong>。</li>
 <li>一位學員上完課說：「其實每堂課都像身心靈課，有很多自我察覺。以前我非常不願意在別人面前表現出內心真實的想法，反而上了銷售課，慢慢學習到內外的合一。」</li></ul>
 <p><strong>這些是他們各自的結果，不是這場講座的保證。</strong>寫在這裡的原因只有一個：他們原本也都覺得自己不夠格。</p>
-<div class="slot"><b>見證牆（新受眾版）</b>
-<i>舊的 圖4-見證牆 掛的是上一個切角的六位學員（房產講師、醫美、兩性機構），<br>
-這一場的台下是身心靈工作者，那張牆會讓她們覺得「不是在講我」。</i>
-<em>slot · 見證截圖 · 要老師挑三到四則</em></div>
+<figure><img src="img/wall-spiritual.png" alt="兩位身心靈同行的見證：一位脈輪舞蹈創始人三場轉換率 15%、20%、40%，一位希塔療癒工作者預約後兩天收三萬">
+<figcaption>圖9 見證牆・身心靈橫式</figcaption></figure>
+<div class="wall">
+<figure><img src="img/v-4000.png" alt="學員對話截圖：非常感恩你今天對話已經可以收 4000 元">
+<figcaption>做一對一的工作者 · 一次對話收到 4,000 元</figcaption></figure>
+<figure><img src="img/v-spiritual.png" alt="學員回饋截圖：其實每堂課都像身心靈課，有很多自我察覺">
+<figcaption>學員回饋 · 「每堂課都像身心靈課」</figcaption></figure>
+</div>
 <div class="midcta"><b>我也想走到那裡 → 立即免費報名</b><i>10/23（五）・10/26（一）　20:00–21:30</i></div>
 
-<h2>這場講座，本身就是示範</h2>
-<p>我先講白。這 90 分鐘我要教你的東西，我會<strong>當場用在你身上</strong>。</p>
-<p>你會一邊聽，一邊發現：「等等，他剛剛那句話，是不是就是他說的那一招？」</p>
-<p>而且到最後，我會<strong>回頭把整場拆給你看</strong>：我為什麼沒有先自我介紹、我為什麼先問你現在卡在哪、我為什麼先講兩千萬的債。</p>
-<p><strong>你會被完整走過一次，而且不會覺得被推銷。</strong></p>
-<p>因為這正是整件事的重點：<strong>不是推銷，是讓對方自己想要。</strong></p>
-
-<h2>這 90 分鐘，你會帶走</h2>
+<h2>你會帶走的，是這幾件事</h2>
 <ol>
 <li><strong>為什麼「再上一張證照」解決不了收不到錢</strong>　三個最常見的誤區，一個一個拆</li>
 <li><strong>把你的獨特之處講成一句話</strong>　3 秒說完自己在做什麼，而且對方會想聽下去</li>
@@ -177,16 +181,14 @@ font-size:.94rem;color:var(--ink-2);margin:1.6rem 0;border-radius:0 6px 6px 0;}
 <li><strong>當他說「考慮看看」時，心裡那一關怎麼過</strong>　成交是為了愛，這句話怎麼變成體質</li>
 <li><strong>一個可能還沒想過的問題</strong>　成交之後呢？一個人只能服務那麼多人，那怎麼辦？</li></ol>
 <p>這五件，就是我帶學生走的那條路。這場講座先把地圖攤開給你看。</p>
-<div class="slot"><b>90 分鐘流程時間軸（新骨架版）</b>
-<i>舊的 圖5 畫的是上一版六段骨架。這一場是開場 → 誤區一 → 誤區二 → 誤區三 → 收攏成一條路 → 收口，<br>
-時間軸要照新骨架重畫。</i>
-<em>slot · 理論圖 · 骨架定了就能出</em></div>
+<figure><img src="img/flow-4.png" alt="90 分鐘四個節點：知道卡住的不是你的資格、看懂收不到錢的真正原因、帶走五個當天就能用的動作、看見自己的天花板在哪">
+<figcaption>圖10 90 分鐘・橫式四節點</figcaption></figure>
 <div class="midcta"><b>這六件我都想帶走 → 立即免費報名</b><i>名額有限・不提供回放・請安排好時間</i></div>
 
 <h2>報名後，請先做一件事（5 分鐘）</h2>
 <p>報名成功後，你會收到一份<strong>影響力健檢</strong>，15 題，大約 5 分鐘。</p>
 <p>這不是心理測驗。它會告訴你，別人在你面前<strong style="color:#AF5433">想不想靠近你</strong>、<strong style="color:#5C7464">願不願意跟你說真話</strong>、<strong style="color:#54718D">覺不覺得你真的能幫到他</strong>、最後<strong style="color:#8E682B">願不願意行動</strong>，這四件事現在各在什麼位置。</p>
-<p><strong>請在講座前做完。</strong>講座中我會直接拿你的結果來講。</p>
+<p><strong>請在講座前做完。</strong>時間允許的話，我會當場拿大家的結果來解盤。</p>
 <figure><img src="img/checkup.png" alt="影響力健檢結果示意"><figcaption>沿用 · 圖6 健檢示意</figcaption></figure>
 
 <h2>誰適合來</h2>
